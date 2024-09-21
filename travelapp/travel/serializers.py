@@ -18,14 +18,14 @@ class DeparturePlaceSerializer(serializers.ModelSerializer):
 
 class DepartureTimeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Schedule
+        model = ScheduleTime
         fields = ['DepartureTime']
 
 
-class DepartureDaySerializer(serializers.ModelSerializer):
+class HotelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Schedule
-        fields = ['DepartureDay']
+        model = Hotel
+        fields = '__all__'
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -51,7 +51,6 @@ class TourSerializer(serializers.ModelSerializer):
     DeparturePlace = DeparturePlaceSerializer()
     Destination = DeparturePlaceSerializer()
     DepartureTime = DepartureTimeSerializer()
-    DepartureDay = DepartureDaySerializer()
 
     class Meta:
         model = Tour
@@ -95,7 +94,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
 
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'address', 'vaitro', 'Avatar']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'address', 'vaitro', 'Avatar',
+                  'sdt']
 
         extra_kwargs = {
             'password': {
@@ -104,10 +104,25 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
-class CustomerSerializer(UserSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        data = validated_data.copy()
+        customer = Customer(**data)
+        customer.set_password(customer.password)
+        customer.save()
+
+        return customer
+
     class Meta:
         model = Customer
-        fields = ['Avatar']
+
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'address', 'Cover', 'Avatar', 'sdt']
+
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
 
 
 class AdminSerializer(UserSerializer):
@@ -139,7 +154,7 @@ class BookTourSerializer(serializers.ModelSerializer):
 class BookHotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookHotel
-        fields = ['id_hotel', 'Checkin', 'Checkout']
+        fields = '__all__'
 
 
 class BookTicketSerializer(serializers.ModelSerializer):
@@ -152,13 +167,13 @@ class BookTicketSerializer(serializers.ModelSerializer):
 class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
-        fields = ['name', 'content', 'tag', 'user_post']
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'Avatar', 'address', 'vaitro']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'Cover', 'Avatar', 'address']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -169,7 +184,7 @@ class UserSerializer(serializers.ModelSerializer):
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ['Name_News', 'Content']
+        fields = '__all__'
 
 
 class Like_TourSerializer(serializers.ModelSerializer):

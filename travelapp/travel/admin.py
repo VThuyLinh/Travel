@@ -9,10 +9,11 @@ from django.template.response import TemplateResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
+import cloudinary
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'last_name', 'vaitro','is_active', 'is_staff']
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ['username', 'last_name', 'vaitro', 'is_active', 'is_staff']
 
 
 class MyAdminSite(admin.AdminSite):
@@ -57,6 +58,34 @@ class TourForm(forms.ModelForm):
         fields = '__all__'
 
 
+class HotelRoomAdmin(admin.ModelAdmin):
+    list_display = ['id_hotel', 'id_room', 'Price']
+    search_fields = ['Price']
+
+    def hotel(self, hotel):
+        if hotel.Hotel.Name:
+            print(hotel.Hotel.Name)
+            return 'hotel.Hotel.Name'
+
+
+class HotelForm(forms.ModelForm):
+    descriptions = forms.CharField(widget=CKEditorUploadingWidget)
+
+    class Meta:
+        model = Hotel
+        fields = '__all__'
+
+
+class HotelAdmin(admin.ModelAdmin):
+    list_display = ['nameofhotel']
+    search_fields = ['nameofhotel']
+    form = HotelForm
+
+    def my_image(self, hotel):
+        if hotel.album.Path:
+            print(hotel.album.Path)
+            return mark_safe(f"<img src='/static/ckeditor/{hotel.album.Path}' width='200' />")
+
 
 class TourAdmin(admin.ModelAdmin):
     list_display = ['Tour_Name']
@@ -73,6 +102,15 @@ class BlogForm(forms.ModelForm):
 
     class Meta:
         model = Blog
+        fields = '__all__'
+
+
+
+class ScheduleTimeAdmin(admin.ModelAdmin):
+    list_display = ['DepartureTime']
+
+    class Meta:
+        model = ScheduleTime
         fields = '__all__'
 
 
@@ -107,13 +145,31 @@ class NewsAdmin(admin.ModelAdmin):
 
 
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ['Name', 'my_image']
+    list_display = ['Name', 'my_image', 'album_id']
     readonly_fields = ['my_image']
 
-    def my_image(self, imageForTour):
-        if (imageForTour):
-            print(imageForTour.Path)
-            return mark_safe(f"<img src='/static/{imageForTour.Path}' width='200' />")
+    def my_image(self, imageTour):
+        if imageTour:
+            print(imageTour.Path)
+            return mark_safe(f"<img src='https://res.cloudinary.com/dqcjhhtlm/{imageTour.Path}' width='200' />")
+
+
+class TransportPlaneAdmin(admin.ModelAdmin):
+    list_display = ['Name', 'License', 'EconomySeat', 'BusinessSeat', 'FirstSeat']
+    search_fields = ['License']
+
+    class Meta:
+        model = TransportPLane
+        fields = '__all__'
+
+
+class TransportCarAdmin(admin.ModelAdmin):
+    list_display = ['Name', 'License', 'seat']
+    search_fields = ['License', 'seat']
+
+    class Meta:
+        model = TransportCar
+        fields = '__all__'
 
 
 # Register your models here.
@@ -125,13 +181,16 @@ admin_site.register(CMT_News)
 admin_site.register(CMT_Tour)
 admin_site.register(Image, ImageAdmin)
 admin_site.register(Album)
-admin_site.register(User, UserAdmin)
+admin_site.register(Customer, CustomerAdmin)
 admin_site.register(BookTicket)
-admin_site.register(Transport)
-admin_site.register(Schedule)
+admin_site.register(TransportCar, TransportCarAdmin)
+admin_site.register(TransportPLane, TransportPlaneAdmin)
+
+admin_site.register(ScheduleTime,ScheduleTimeAdmin)
 admin_site.register(Tag)
 admin_site.register(Place)
 admin_site.register(Blog)
 admin_site.register(BookHotel)
 admin_site.register(Room)
-admin_site.register(Hotel)
+admin_site.register(HotelRoom, HotelRoomAdmin)
+admin_site.register(Hotel, HotelAdmin)

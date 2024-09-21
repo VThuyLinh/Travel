@@ -38,7 +38,7 @@ class StateOfOrder(models.TextChoices):
 class SeatClass(models.TextChoices):
     Economy_class = "Economy_class"
     Business_class = "Business_class"
-    First_class = "Complete_class"
+    First_class = "First_class"
 
 
 class User(AbstractUser):
@@ -74,7 +74,23 @@ class Customer(User):
 class Transport(models.Model):
     Name = models.TextField()
     License = models.CharField(max_length=15)
-    Seat = models.IntegerField()
+
+    def __str__(self):
+        return "%s %s" % (self.Name, self.License)
+
+
+class TransportCar(Transport):
+    seat = models.IntegerField(null=True)
+
+    def __str__(self):
+        return "%s %s" % (self.Name, self.License)
+
+
+class TransportPLane(Transport):
+    TotalSeat = models.IntegerField(null=True)
+    EconomySeat = models.IntegerField( null=True)
+    BusinessSeat = models.IntegerField(null=True)
+    FirstSeat = models.IntegerField(null=True)
 
     def __str__(self):
         return "%s %s" % (self.Name, self.License)
@@ -88,27 +104,27 @@ class Place(models.Model):
         return self.Place_Name
 
 
-class Image(models.Model):
-    Name = models.CharField(max_length=500)
-    Path = CloudinaryField(null=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.Name
-
-
 class Album(models.Model):
     Name = models.CharField(max_length=500)
     created_date = models.DateTimeField(auto_now_add=True)
-    image_id = models.ManyToManyField(Image)
 
     def __str__(self):
         return self.Name
 
 
-class Schedule(DateGeneral):
-    DepartureDay = models.DateField(auto_now_add=True)
-    DepartureTime = models.TimeField(auto_now_add=True)
+class Image(models.Model):
+    Name = models.CharField(max_length=500)
+    Path = CloudinaryField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    album_id = models.ForeignKey(Album, on_delete=models.CASCADE, default=1)
+
+    def __str__(self):
+        return self.Name
+
+
+
+class ScheduleTime(models.Model):
+    DepartureTime = models.TimeField()
 
     def __str__(self):
         return str(self.DepartureTime)
@@ -119,8 +135,8 @@ class Tour(DateGeneral):
     Tour_Name = models.CharField(max_length=100)
     Description = RichTextField()
     DeparturePlace = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='Place.Tour_set+')
-    DepartureDay = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name='Schedule.Tour_set+')
-    DepartureTime = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name='Schedule.Tour_set+')
+    DepartureDay = models.DateField()
+    DepartureTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, related_name='ScheduleTime.Tour_set+')
     Destination = models.ForeignKey(Place, on_delete=models.CASCADE)
     Days = models.IntegerField()
     Nights = models.IntegerField()
@@ -169,7 +185,7 @@ class CMT_Tour(CMT):
 
 class Rating_Tour(DateGeneral):
     tour = models.ForeignKey(Tour, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
     NumberOfStar = models.IntegerField()
 
     class Meta:
@@ -177,7 +193,7 @@ class Rating_Tour(DateGeneral):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -227,7 +243,6 @@ class Hotel(models.Model):
 class Room(DateGeneral):
     name = models.CharField(max_length=1000)
     description = models.CharField(max_length=7000)
-    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=False, default=1)
 
     def __str__(self):
         return self.name
@@ -246,7 +261,7 @@ class Blog(DateGeneral):
     album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True)
     active = models.BooleanField(default=True)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=False)
-    user_post = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=1)
+    user_post = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False, default=1)
 
     def __str__(self):
         return self.name
@@ -255,15 +270,15 @@ class Blog(DateGeneral):
 class BookTicket(DateGeneral):
     id_bookticket = models.CharField(max_length=10, null=False, default='')
     vehicle = models.ForeignKey(Transport, on_delete=models.CASCADE, null=False)
-    DepartureTime = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=False, related_name='Schedule.Tour_set+')
-    EstimatedTime = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=False, related_name='Schedule.Tour_set+')
+    DepartureTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
+    EstimatedTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
     OneOrReturn = models.BooleanField(default=True)
     DeparturePlace = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Place.Tour_set+')
     Destination = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Schedule.Tour_set+')
     Quantity_Adult = models.IntegerField(default=1)
     Quantity_Children = models.IntegerField(default=0)
     SeatClass = models.CharField(choices=SeatClass.choices, max_length=30, default="Economy_class")
-    user_book = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=1)
+    user_book = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False, default=1)
 
     def __str__(self):
         return self.DeparturePlace
@@ -278,13 +293,12 @@ class HotelRoom(models.Model):
 class BookHotel(DateGeneral):
     id_book_hotel = models.CharField(max_length=10, null=False, default='')
     id_hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=False)
-    id_user_book_hotel = models.ForeignKey(User, on_delete=models.CASCADE, null=False,
-                                           related_name='User.bookhotel_set+')
+    id_user_book_hotel = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False,
+                                           related_name='Admin.bookhotel_set+')
     GuestOrSomeone = models.BooleanField(default=True)
     BreakfastOrNone = models.BooleanField(default=True)
     Checkin = models.DateTimeField(default=datetime.datetime.now())
     Checkout = models.DateTimeField(default=datetime.datetime.now())
     Quantity_Adult = models.IntegerField(default=1)
     Quantity_Children = models.IntegerField(default=0)
-    Room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)
-    user_book = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=1)
+    Room = models.ForeignKey(HotelRoom, on_delete=models.CASCADE, null=False)

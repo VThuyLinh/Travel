@@ -28,7 +28,13 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-CKEDITOR_UPLOAD_PATH = "ckeditors/images/"
+CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
+MEDIA_ROOT = '%s/Travel/static/' % BASE_DIR
+
+
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/static/"
 
 import pymysql
 
@@ -49,7 +55,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'debug_toolbar',
-    'oauth2_provider'
+    'oauth2_provider',
+    'sslserver'
 
 ]
 

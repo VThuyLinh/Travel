@@ -50,6 +50,12 @@ class AlbumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Album.objects
     serializer_class = serializers.AlbumSerializer
 
+    @action(methods=['delete'], url_path='delete_admin', detail=True)
+    def delete(self, request, pk):
+        queryset = Album.objects.get(pk=pk)
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class TourViewSetDetail(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Tour.objects.filter(Active=True)
@@ -117,6 +123,11 @@ class NewsViewSet(viewsets.ViewSet, generics.ListAPIView):
         return queryset
 
 
+class NewsViewSetC(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = News.objects.filter(active=True)
+    serializer_class = serializers.NewsSerializer
+
+
 class NewsDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = News.objects
     serializer_class = serializers.NewsDetailSerializer
@@ -161,6 +172,12 @@ class BookHotelViewSet(viewsets.ViewSet, generics.CreateAPIView):
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['delete'], url_path='delete_admin', detail=True)
+    def delete(self, request, pk):
+        queryset = BookHotel.objects.get(pk=pk)
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class BookTicketViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = BookTicket.objects
@@ -180,7 +197,6 @@ class BookTicketViewSet(viewsets.ViewSet, generics.CreateAPIView):
         if id:
             queryset = queryset.filter(id__icontains=id)
         return queryset
-
 
 
 class BlogViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -203,8 +219,6 @@ class BlogViewSet(viewsets.ViewSet, generics.CreateAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
 class ChangePasswordViewSet(viewsets.ViewSet, generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.ChangePasswordSerializer
@@ -225,20 +239,56 @@ class AdminViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
     @action(methods=['delete'], url_path='delete_admin', detail=True)
     def delete(self, request, pk):
-        queryset = User.objects.filter(vaitro="VaiTro.Admin")
+        queryset = Admin.objects.filter(vaitro="VaiTro.Admin")
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['get'], url_path='get_admin', detail=True)
     def get_admin(self, request, pk):
-        admins = User.objects.get(pk=pk)
+        admins = Admin.objects.get(pk=pk)
         return Response(serializers.UserSerializer(admins).data,
                         status=status.HTTP_200_OK)
+
+
+class HotelViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = Hotel.objects
+    serializer_class = serializers.HotelSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        q = self.request.query_params.get('Name')
+        if q:
+            queryset = queryset.filter(nameofhotel=q)
+        return queryset
+
+
+class CustomerViewSet1(viewsets.ViewSet, generics.ListAPIView):
+    queryset = Customer.objects
+    serializer_class = serializers.CustomerSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        q = self.request.query_params.get('username')
+        if q:
+            queryset = queryset.filter(username=q)
+        return queryset
 
 
 class CustomerViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = Customer.objects
     serializer_class = serializers.CustomerSerializer
+
+    @action(methods=['get'], url_path='get_customer', detail=True)
+    def get_customer(self, request, pk):
+        customer = Customer.objects.get(pk=pk)
+        return Response(serializers.UserSerializer(customer).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['delete'], url_path='delete_customer', detail=True)
+    def delete(self, request, pk):
+        queryset = Customer.objects.filter(vaitro="VaiTro.Customer")
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BookTourDetailViewSet(viewsets.ViewSet, generics.ListAPIView):
