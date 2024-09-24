@@ -5,8 +5,7 @@
 import React, { useState } from 'react';
 import { Button, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import StyleCal from '../style/StyleCal';
-
+import StyleCalendar from '../../style/StyleAll';
 
 const Calendar = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -34,8 +33,8 @@ const Calendar = () => {
   };
 
   return (
-    <View style={StyleCal.btn1}>
-      <Button style={StyleCal.btn1} color={'#7bae5e'}  title="Thời gian đi" onPress={showDatePicker} />
+    <View style={StyleCalendar.btn1}>
+      <Button style={StyleCalendar.btn1} color={'#7bae5e'}  title="Thời gian đi" onPress={showDatePicker} />
       {isDatePickerVisible && (
         <DateTimePicker
           testID="dateTimePicker"

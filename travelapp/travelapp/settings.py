@@ -105,10 +105,10 @@ WSGI_APPLICATION = 'travelapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'traveldb',
-        'USER': 'root',
+        'NAME': 'ThuyLinh$traveldb',
+        'USER': 'ThuyLinh',
         'PASSWORD': 'Admin@123',
-        'HOST': ''  # mặc định localhost
+        'HOST': 'ThuyLinh.mysql.pythonanywhere-services.com'  # mặc định localhost
 
     }
 }
@@ -151,3 +151,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK={
+    'DEFAULT_AUTHENTICATION_CLASSES':('oauth2_provider.contrib.rest_framework.OAuth2Authentication',)
+}
+CLIENT_ID='LJSGfFvVLf1jdz1IqMlhqWfdTuMSMt8X9eeffPDA'
+CLIENT_SECRET='TNeskggjv6uEE0CcGV4Rg47I6T1ggGq6C39AT36p4rfdkmImsMhwAYKlMdR6NMYWXxPqsu2BkI7PCI25LZBlfJTYobQYtR95I1jNTpOEHj7p5spkBLNbAfH5MF4t0M7f'

@@ -163,6 +163,14 @@ class TransportPlaneAdmin(admin.ModelAdmin):
         fields = '__all__'
 
 
+class BookTourAdmin(admin.ModelAdmin):
+    list_display = ['id_booktour', 'id_tour_id','State','id_customer_bt']
+    search_fields = ['id_booktour']
+
+    class Meta:
+        model = BookTour
+        fields = '__all__'
+
 class TransportCarAdmin(admin.ModelAdmin):
     list_display = ['Name', 'License', 'seat']
     search_fields = ['License', 'seat']
@@ -175,7 +183,7 @@ class TransportCarAdmin(admin.ModelAdmin):
 # Register your models here.
 admin_site.register(News, NewsAdmin)
 admin_site.register(Tour, TourAdmin)
-admin_site.register(BookTour)
+admin_site.register(BookTour,BookTourAdmin)
 admin_site.register(Admin)
 admin_site.register(CMT_News)
 admin_site.register(CMT_Tour)
@@ -185,7 +193,6 @@ admin_site.register(Customer, CustomerAdmin)
 admin_site.register(BookTicket)
 admin_site.register(TransportCar, TransportCarAdmin)
 admin_site.register(TransportPLane, TransportPlaneAdmin)
-
 admin_site.register(ScheduleTime,ScheduleTimeAdmin)
 admin_site.register(Tag)
 admin_site.register(Place)

@@ -42,8 +42,9 @@ class SeatClass(models.TextChoices):
 
 
 class User(AbstractUser):
+    username=models.CharField(max_length=20,null=False, default='OK', unique=True)
     password = models.CharField(max_length=300, null=False)
-    sdt = models.CharField(max_length=10, null=False)
+    sdt = models.CharField(max_length=10, null=False, unique=True)
     address = models.TextField(max_length=300, null=True)
     vaitro = models.CharField(choices=VaiTro.choices, max_length=30, default="Customer")
     Avatar = CloudinaryField(null=False)
@@ -73,7 +74,7 @@ class Customer(User):
 
 class Transport(models.Model):
     Name = models.TextField()
-    License = models.CharField(max_length=15)
+    License = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
         return "%s %s" % (self.Name, self.License)
@@ -131,8 +132,8 @@ class ScheduleTime(models.Model):
 
 
 class Tour(DateGeneral):
-    Id_Tour = models.CharField(max_length=40, null=False)
-    Tour_Name = models.CharField(max_length=100)
+    Id_Tour = models.CharField(max_length=40, null=False, unique=True)
+    Tour_Name = models.CharField(max_length=100, unique=True)
     Description = RichTextField()
     DeparturePlace = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='Place.Tour_set+')
     DepartureDay = models.DateField()
@@ -145,13 +146,14 @@ class Tour(DateGeneral):
     Adult_price = models.FloatField(default=0)
     Children_price = models.FloatField(default=0)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    cover=CloudinaryField(null=True)
 
     def __str__(self):
         return self.Tour_Name
 
 
 class News(DateGeneral):
-    Name_News = models.CharField(max_length=600, null=False)
+    Name_News = models.CharField(max_length=255, null=False, unique=True)
     image_thumbnail = CloudinaryField(null=True)
     active = models.BooleanField(default=True)
     Content = RichTextField()
@@ -217,9 +219,9 @@ class Like_News(Like):
 
 class BookTour(models.Model):
     id_booktour = models.CharField(max_length=10, null=False, default='')
-    id_customer_bt = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    id_customer_bt = models.ForeignKey(Customer, on_delete=models.CASCADE, default=0)
     book_date = models.DateTimeField(auto_now=True)
-    id_tour_id = models.ForeignKey(Tour, on_delete=models.PROTECT)
+    id_tour_id = models.ForeignKey(Tour, on_delete=models.PROTECT, default=0)
     Quantity_Adult = models.IntegerField(default=1)
     Quantity_Children = models.IntegerField(default=0)
     State = models.CharField(choices=StateOfOrder.choices, max_length=50)
@@ -249,7 +251,7 @@ class Room(DateGeneral):
 
 
 class Tag(DateGeneral):
-    name = models.CharField(max_length=5000)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -268,7 +270,7 @@ class Blog(DateGeneral):
 
 
 class BookTicket(DateGeneral):
-    id_bookticket = models.CharField(max_length=10, null=False, default='')
+    id_bookticket = models.CharField(max_length=10, null=False, default='OK')
     vehicle = models.ForeignKey(Transport, on_delete=models.CASCADE, null=False)
     DepartureTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
     EstimatedTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
@@ -291,10 +293,10 @@ class HotelRoom(models.Model):
 
 
 class BookHotel(DateGeneral):
-    id_book_hotel = models.CharField(max_length=10, null=False, default='')
+    id_book_hotel = models.CharField(max_length=10, null=False, default='OK')
     id_hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=False)
     id_user_book_hotel = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False,
-                                           related_name='Admin.bookhotel_set+')
+                                           related_name='Customer.bookhotel_set+')
     GuestOrSomeone = models.BooleanField(default=True)
     BreakfastOrNone = models.BooleanField(default=True)
     Checkin = models.DateTimeField(default=datetime.datetime.now())

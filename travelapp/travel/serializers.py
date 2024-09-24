@@ -16,6 +16,12 @@ class DeparturePlaceSerializer(serializers.ModelSerializer):
         fields = ['Place_Name']
 
 
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ['name']
+
+
 class DepartureTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduleTime
@@ -25,6 +31,12 @@ class DepartureTimeSerializer(serializers.ModelSerializer):
 class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotel
+        fields = '__all__'
+
+
+class BookHotelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookHotel
         fields = '__all__'
 
 
@@ -54,8 +66,15 @@ class TourSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tour
-        fields = ['id', 'Id_Tour', 'Tour_Name', 'DeparturePlace',
-                  'Destination', 'vehicle', 'DepartureDay', 'DepartureTime', 'DatePost']
+        fields = '__all__'
+
+
+class HotelRoomSerializer(serializers.ModelSerializer):
+    id_room = RoomSerializer()
+
+    class Meta:
+        model = HotelRoom
+        fields = ['id_room', 'Price']
 
 
 class TourSerializerDetail(serializers.ModelSerializer):
@@ -145,12 +164,6 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
 
-class BookTourSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookTour
-        fields = ['id_tour_id', 'Quantity_Adult', 'Quantity_Children', 'State']
-
-
 class BookHotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookHotel
@@ -179,6 +192,24 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['user_ptr_id']
+
+
+class TourSerializer1(serializers.ModelSerializer):
+    class Meta:
+        model = Tour
+        fields = ['Tour_Name']
+
+
+class BookTourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookTour
+        fields = '__all__'
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -230,10 +261,16 @@ class CMT_NewsSerializer(serializers.ModelSerializer):
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ['Name_News', 'image_thumbnail']
+        fields = ['Name_News', 'image_thumbnail', 'Content']
 
 
 class NewsDetailSerializer(NewsSerializer):
     class Meta:
         model = News
         fields = NewsSerializer.Meta.fields + ['Content']
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'

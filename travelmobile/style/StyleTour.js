@@ -2,99 +2,72 @@ import { StyleSheet } from "react-native";
 
 const StyleTour = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor:"white"
-    }, tourspage: {
-        fontSize: 32,
-        fontWeight: "bold",
-        color: "#153050",
-        width:"100%",
-        height:"800px",
-        marginTop:20,
-        paddingBottom:50,
-        paddingLeft:30,
-        paddingRight:10,
-    }, 
-    sear:{ 
-        backgroundColor:"#d6d6d6",
-        marginBottom:20,
-        marginLeft:10,
-        marginRight:10
-    },
-    tour:{
-        backgroundColor:"#e4ebed",
-        color:"pink"
-    },
-    text:{
-        fontSize:28,
-        marginBottom:10,
-        marginTop:20,
-        color:"#153050",
-        marginLeft:10
-    },text4:{
-        fontSize:20,
-        marginBottom:5,
-        marginTop:10,
-        color:"#153050",
-        textAlign:"right"
-    }, text5:{
-        fontSize:20,
-        marginBottom:5,
-        marginTop:10,
-        color:"#153050",
-        textAlign:"right",
-        marginRight:10
+      flex: 1,
+      alignItems: 'center',
     },
     text1:{
-        fontSize:18,
-        color:"#153050",
-        marginLeft:10
+      fontSize:18,
+
+    },
+    text21:{
+      marginTop:7,
+      fontSize:18,
+      color:'white'
+
     },
     text2:{
-        fontSize:15,
-        color:"#153050",
-        marginLeft:20,
-        marginBottom:5,
-        marginTop:5
+      fontSize:18,
+      fontWeight:'bold'
+
     },
+    card:{
+      backgroundColor:"#f1faee",
+      marginBottom:30,
+      marginLeft:8,
+      marginRight:8,
+      height:545
+  }
+  , btn:{
+    backgroundColor:"red",
+    marginTop:3,
+    marginLeft:230,
+    width:140,
+    height:35,
+    textAlign:"center"
+  }, btn1:{
+    backgroundColor:"green",
+    marginTop:3,
+    marginLeft:210,
+    width:160,
+    height:35,
+    textAlign:"center"
+  }, btn2:{
+    backgroundColor:"purple",
+    marginTop:3,
+    marginLeft:210,
+    width:160,
+    height:35,
+    textAlign:"center",
+  }, btn3:{
+    backgroundColor:"black",
+    marginTop:3,
+    marginLeft:210,
+    width:160,
+    height:35,
+    textAlign:"center"
+  },
     text3:{
-        fontSize:40,
-        marginBottom:5,
-        marginTop:10,
-        color:"#153050",
-        textAlign:"center",
-        fontWeight:"bold"
+      fontSize:17
     },
-    icon:{
-        fontSize:18,
-        
+    loginn:{
+      color:'blue'
     },
-    row: {
-        flexDirection: "row",
-        flexWrap: "wrap"
-    }, margin: {
-        margin: 5
-    }, avatar: {
-        width: 80,
-        height: 80,
-        borderRadius: 20
+    imgcard:{
+      height:400
     },
-    image:{
-        marginBottom:20,
-    },
-    sty:{
-        marginLeft:10,
-        marginRight:10
-    },
-    imgincard:{
-        marginLeft:10,
-        marginRight:10
-    },
-    bgrcolor:{
-        backgroundColor:'#f6EEE8'
-    },
-    tab:{
-        height:200
+    cmtt:{
+      marginLeft:10,
+
     }
     
   });
