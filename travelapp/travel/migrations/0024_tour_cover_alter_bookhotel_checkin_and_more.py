@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='tour',
-            name='cover',
-            field=cloudinary.models.CloudinaryField(max_length=255, null=True),
-        ),
         migrations.AlterField(
             model_name='bookhotel',
             name='Checkin',

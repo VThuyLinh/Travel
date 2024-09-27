@@ -159,6 +159,7 @@ class Migration(migrations.Migration):
                 ('Destination', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='travel.place')),
                 ('album', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='travel.album')),
                 ('vehicle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='travel.transport')),
+                ('cover', cloudinary.models.CloudinaryField(max_length=255, null=False))
             ],
             options={
                 'abstract': False,

@@ -42,7 +42,7 @@ class SeatClass(models.TextChoices):
 
 
 class User(AbstractUser):
-    username=models.CharField(max_length=20,null=False, default='OK', unique=True)
+    username = models.CharField(max_length=20, null=False, default='OK', unique=True)
     password = models.CharField(max_length=300, null=False)
     sdt = models.CharField(max_length=10, null=False, unique=True)
     address = models.TextField(max_length=300, null=True)
@@ -89,7 +89,7 @@ class TransportCar(Transport):
 
 class TransportPLane(Transport):
     TotalSeat = models.IntegerField(null=True)
-    EconomySeat = models.IntegerField( null=True)
+    EconomySeat = models.IntegerField(null=True)
     BusinessSeat = models.IntegerField(null=True)
     FirstSeat = models.IntegerField(null=True)
 
@@ -123,7 +123,6 @@ class Image(models.Model):
         return self.Name
 
 
-
 class ScheduleTime(models.Model):
     DepartureTime = models.TimeField()
 
@@ -146,7 +145,7 @@ class Tour(DateGeneral):
     Adult_price = models.FloatField(default=0)
     Children_price = models.FloatField(default=0)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    cover=CloudinaryField(null=True)
+    cover = CloudinaryField(null=True)
 
     def __str__(self):
         return self.Tour_Name
@@ -157,6 +156,7 @@ class News(DateGeneral):
     image_thumbnail = CloudinaryField(null=True)
     active = models.BooleanField(default=True)
     Content = RichTextField()
+    admin = models.ForeignKey(Admin, null=False, default=1, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.Name_News
@@ -196,6 +196,7 @@ class Rating_Tour(DateGeneral):
 
 class Like(models.Model):
     user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    Active = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
@@ -203,7 +204,6 @@ class Like(models.Model):
 
 class Like_Tour(Like):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
-    Active = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('tour', 'user')
@@ -211,7 +211,6 @@ class Like_Tour(Like):
 
 class Like_News(Like):
     news = models.ForeignKey(News, on_delete=models.PROTECT)
-    Active = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('news', 'user')
@@ -242,6 +241,13 @@ class Hotel(models.Model):
         return self.nameofhotel
 
 
+class Like_Hotel(Like):
+    hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ('hotel', 'user')
+
+
 class Room(DateGeneral):
     name = models.CharField(max_length=1000)
     description = models.CharField(max_length=7000)
@@ -269,11 +275,28 @@ class Blog(DateGeneral):
         return self.name
 
 
+class Like_Blog(Like):
+    blog = models.ForeignKey(Blog, on_delete=models.PROTECT)
+    Active = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('blog', 'user')
+
+
+class CMT_Blog(CMT):
+    blog = models.ForeignKey(Blog, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return "%s %s %s" % (self.content, self.user, self.blog)
+
+
 class BookTicket(DateGeneral):
     id_bookticket = models.CharField(max_length=10, null=False, default='OK')
     vehicle = models.ForeignKey(Transport, on_delete=models.CASCADE, null=False)
-    DepartureTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
-    EstimatedTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False, related_name='ScheduleTime.Tour_set+')
+    DepartureTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False,
+                                      related_name='ScheduleTime.Tour_set+')
+    EstimatedTime = models.ForeignKey(ScheduleTime, on_delete=models.CASCADE, null=False,
+                                      related_name='ScheduleTime.Tour_set+')
     OneOrReturn = models.BooleanField(default=True)
     DeparturePlace = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Place.Tour_set+')
     Destination = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Schedule.Tour_set+')

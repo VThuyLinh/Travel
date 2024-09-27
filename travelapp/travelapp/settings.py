@@ -105,10 +105,10 @@ WSGI_APPLICATION = 'travelapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ThuyLinh$traveldb',
-        'USER': 'ThuyLinh',
+        'NAME': 'traveldb',
+        'USER': 'root',
         'PASSWORD': 'Admin@123',
-        'HOST': 'ThuyLinh.mysql.pythonanywhere-services.com'  # mặc định localhost
+        'HOST': ''  # mặc định localhost
 
     }
 }

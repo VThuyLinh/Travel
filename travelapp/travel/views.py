@@ -283,6 +283,27 @@ class BlogViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['post'], url_path='create_cmt_blog', detail=True)
+    def create_cmt_blog(self, request, pk):
+        cmt_blog = self.get_object().cmt_blog_set.create(content=request.data.get('content'), user=request.user)
+        return Response(serializers.CMT_TourSerializer(cmt_blog).data)
+
+    @action(methods=['get'], url_path='get_like_blog', detail=True)
+    def like_blog(self, request, pk):
+        like_blog = Like_Blog.objects
+        return Response(serializers.Like_BlogSerializer(like_blog, many=True).data)
+
+    @action(methods=['post'], url_path='like_blog', detail=True)
+    def like(self, request, pk):
+        li, created = Like_Blog.objects.get_or_create(blog=self.get_object(),
+                                                      user=request.user)
+
+        if not created:
+            li.Active = not li.Active
+            li.save()
+
+        return Response(serializers.BlogSerializer(self.get_object()).data, status=status.HTTP_201_CREATED)
+
 
 # class DeleteUserViewSet(viewsets.ViewSet, generics.DestroyAPIView):
 
@@ -335,6 +356,22 @@ class HotelViewSet(viewsets.ViewSet, generics.ListAPIView):
             queryset = queryset.filter(nameofhotel=q)
         return queryset
 
+    @action(methods=['get'], url_path='get_like_hotel', detail=True)
+    def like_hotel(self, request, pk):
+        like_hotel = Like_Hotel.objects
+        return Response(serializers.Like_BlogSerializer(like_hotel, many=True).data)
+
+    @action(methods=['post'], url_path='like_hotel', detail=True)
+    def like(self, request, pk):
+        li, created = Like_Hotel.objects.get_or_create(hotel=self.get_object(),
+                                                       user=request.user)
+
+        if not created:
+            li.Active = not li.Active
+            li.save()
+
+        return Response(serializers.HotelSerializer(self.get_object()).data, status=status.HTTP_201_CREATED)
+
 
 class BookTourDetailViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = BookTour.objects
@@ -353,6 +390,12 @@ class CMT_NewsViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.Retrie
     permission_classes = [permission.CMTOwner]
 
 
+class CMT_BlogViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.RetrieveAPIView, generics.UpdateAPIView):
+    queryset = CMT_Blog.objects.all()
+    serializer_class = serializers.CMT_BlogSerializer
+    permission_classes = [permission.CMTOwner]
+
+
 class Rating_TourViewSet(viewsets.ViewSet, generics.RetrieveAPIView, generics.DestroyAPIView):
     queryset = Rating_Tour.objects.all()
     serializer_class = serializers.RatingTourSerializer
@@ -361,4 +404,4 @@ class Rating_TourViewSet(viewsets.ViewSet, generics.RetrieveAPIView, generics.De
 
 class TagViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Tag.objects.all()
-    serializer_class =  serializers.TagSerializer
+    serializer_class = serializers.TagSerializer

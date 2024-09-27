@@ -90,6 +90,10 @@ class TourSerializerDetail(serializers.ModelSerializer):
         tour_cmt = pk.cmt_tour_set.all()
         return [{'user': a.user.first_name + " " + a.user.last_name, 'content': a.content} for a in tour_cmt]
 
+    def get_like_tour(self, pk):
+        tour_like = pk.like_tour_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name, 'Active': a.Active} for a in tour_like]
+
     def get_rating_tour(self, pk):
         tour_rating = pk.rating_tour_set.all()
         return [{'user': rt.user.first_name + " " + rt.user.last_name, 'NumberOfStart': rt.NumberOfStart} for rt in
@@ -178,6 +182,14 @@ class BookTicketSerializer(serializers.ModelSerializer):
 
 
 class BlogSerializer(serializers.ModelSerializer):
+    def get_cmt_blog(self, pk):
+        blog_cmt = pk.cmt_blog_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name, 'content': a.content} for a in blog_cmt]
+
+    def get_like_blog(self, pk):
+        blog_like = pk.like_blog_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name, 'Active': a.Active} for a in blog_like]
+
     class Meta:
         model = Blog
         fields = '__all__'
@@ -226,6 +238,14 @@ class Like_TourSerializer(serializers.ModelSerializer):
         fields = ['tour', 'Active']
 
 
+class Like_BlogSerializer(serializers.ModelSerializer):
+    blog = BlogSerializer()
+
+    class Meta:
+        model = Like_Blog
+        fields = ['blog', 'Active']
+
+
 class Like_NewsSerializer(serializers.ModelSerializer):
     news = NewsSerializer()
 
@@ -250,6 +270,12 @@ class CMT_TourSerializer(serializers.ModelSerializer):
     class Meta:
         model = CMT_Tour
         fields = CMTSerializer.Meta.fields + ['tour']
+
+
+class CMT_BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CMT_Blog
+        fields = CMTSerializer.Meta.fields + ['blog']
 
 
 class CMT_NewsSerializer(serializers.ModelSerializer):
