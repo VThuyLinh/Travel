@@ -15,9 +15,9 @@ const Account = () => {
     const { width } = useWindowDimensions();
    
     return (
-        <View style={[StyleAll.container, MyStyle.margin]}>
+        <View style={[StyleAll.container, StyleAll.margin]}>
             
-            <Avatar.Image style={StyleLogin.avatar}size={280} source={{uri: `${user.Avatar}`.startsWith("https://tlinh.pythonanywhere.com/static")? `${user.Avatar}`:`https://tlinh.pythonanywhere.com/static${user.Avatar}`}} />
+            <Avatar.Image style={StyleLogin.avatar}size={280} source={{uri: `https://res.cloudinary.com/dqcjhhtlm/${user.Avatar}`}} />
             
            <Button style={StyleLogin.hello}><Text style={StyleLogin.textinhello}><Icon size={18} style={StyleLogin.m_10} name="suitcase-rolling"></Icon>  Xin chào, {user.last_name}</Text></Button>
             <List.Section>

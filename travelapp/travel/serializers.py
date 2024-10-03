@@ -43,19 +43,13 @@ class BookHotelSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ['Path']
+        fields = ['id', 'Path', 'album_id']
 
 
 class AlbumSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
-    def get_image(self, pk):
-        image1 = pk.image_id.all()
-        return [{'Name': a.Name, 'Path': str(a.Path)} for a in image1]
-
     class Meta:
         model = Album
-        fields = ['id', 'image']
+        fields = ['id']
 
 
 class TourSerializer(serializers.ModelSerializer):
@@ -88,7 +82,7 @@ class TourSerializerDetail(serializers.ModelSerializer):
 
     def get_cmt_tour(self, pk):
         tour_cmt = pk.cmt_tour_set.all()
-        return [{'user': a.user.first_name + " " + a.user.last_name, 'content': a.content} for a in tour_cmt]
+        return [{'user': a.user.username, 'content': a.content} for a in tour_cmt]
 
     def get_like_tour(self, pk):
         tour_like = pk.like_tour_set.all()
@@ -96,7 +90,7 @@ class TourSerializerDetail(serializers.ModelSerializer):
 
     def get_rating_tour(self, pk):
         tour_rating = pk.rating_tour_set.all()
-        return [{'user': rt.user.first_name + " " + rt.user.last_name, 'NumberOfStart': rt.NumberOfStart} for rt in
+        return [{'user': rt.user.first_name + " " + rt.user.last_name, 'NumberOfStar': rt.NumberOfStar} for rt in
                 tour_rating]
 
     class Meta:
@@ -118,7 +112,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
 
         fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'address', 'vaitro', 'Avatar',
-                  'sdt']
+                  'sdt', 'Cover']
 
         extra_kwargs = {
             'password': {
@@ -127,25 +121,10 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
-class CustomerSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        data = validated_data.copy()
-        customer = Customer(**data)
-        customer.set_password(customer.password)
-        customer.save()
-
-        return customer
-
-    class Meta:
-        model = Customer
-
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'address', 'Cover', 'Avatar', 'sdt']
-
-        extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
-        }
+# class CustomerSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Customer
+#         fields = UserSerializer.Meta.fields + ['user_ptr_id']
 
 
 class AdminSerializer(UserSerializer):
@@ -195,21 +174,21 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
+
+    def create(self, validate_data):
+        return Customer.objects.create_user(**validate_data)
+
     class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'Cover', 'Avatar', 'address']
+        model = Customer
+
+        fields = '__all__'
+
         extra_kwargs = {
             'password': {
                 'write_only': True
             }
         }
-
-
-class CustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = ['user_ptr_id']
 
 
 class TourSerializer1(serializers.ModelSerializer):
@@ -267,21 +246,27 @@ class RatingTourSerializer(serializers.ModelSerializer):
 
 
 class CMT_TourSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = CMT_Tour
-        fields = CMTSerializer.Meta.fields + ['tour']
+        fields = ['id', 'content', 'image', 'user']
 
 
 class CMT_BlogSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+
     class Meta:
         model = CMT_Blog
-        fields = CMTSerializer.Meta.fields + ['blog']
+        fields = ['id', 'content', 'image', 'customer']
 
 
 class CMT_NewsSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+
     class Meta:
         model = CMT_News
-        fields = CMTSerializer.Meta.fields + ['news']
+        fields = ['id', 'content', 'image', 'customer']
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -300,3 +285,14 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
+
+
+# class AuthenticatedTourDetailsSerializer(TourSerializerDetail):
+#     liked = serializers.SerializerMethodField()
+#
+#     def get_liked(self, tour):
+#         return tour.like_set.filter(active=True).exists()
+#
+#     class Meta:
+#         model = TourSerializerDetail.Meta.model
+#         fields = ['__all__','like']

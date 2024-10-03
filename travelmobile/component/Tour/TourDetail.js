@@ -19,7 +19,11 @@ const TourDetail = ({ navigation,route }) => {
     const [gkhanh, setGioKH]= React.useState([]);
     const [anh, setAnh]= React.useState([]);
     const [cmt, setComment]= React.useState([]);
+    const [usercmt, setUserCMT]= React.useState([]);
     const [cmtTour, setCommentTour]= React.useState([]);
+    const [customer, setCustomer]= React.useState([]);
+    const [tam, setTam]= React.useState([]);
+    const [image, setImage]= React.useState([]);
     const [active, setActive] = React.useState(false);
     const [active1, setActive1] = React.useState(false);
     const [active2, setActive2] = React.useState(false);
@@ -36,9 +40,17 @@ const TourDetail = ({ navigation,route }) => {
             setNoiden(res.data.Destination.Place_Name)
             setPTien(res.data.vehicle.Name)
             setGioKH(res.data.DepartureTime.DepartureDay)
-            setAnh(res.data.album.image)
+            setAnh(res.data.album.id)
             setComment(res.data.cmt_tour)
+            
             setLis(res.data.vehicle.License)
+            let res1= await APIs.get(endpoints["image"]);
+            setImage(res1.data);
+            let res2 = await APIs. get(endpoints["user"]);
+            setCustomer(res2.data);
+            console.warn(res.data.results);
+            let res3 = await APIs.get(endpoints["cmt_tour"]);
+            setUserCMT(res3.data);
         } catch (ex) {
             console.error(ex);
         }
@@ -81,6 +93,7 @@ const TourDetail = ({ navigation,route }) => {
             console.info(form);
 
             let res = await APIs.post(endpoints['cmt_tour'](tour_id), form, {headers: {'Content-Type': 'multipart/form-data'}});
+           
             if (res.status === 201)
                nav.navigate("tour");
                
@@ -167,7 +180,8 @@ const TourDetail = ({ navigation,route }) => {
             setLoading(false);
         }
     }
-    
+
+   
     
    
     
@@ -177,21 +191,56 @@ const TourDetail = ({ navigation,route }) => {
             {tourdetail===null?<ActivityIndicator animating={true} color={'blue'} />:
                 <Card style={StyleAll.bgrcolor}>
                     <Card.Content>
+                    {/* .slice(0,10) */}
                         <Text variant="titleLarge" style={StyleAll.text3}>{tourdetail.Tour_Name}</Text>
                         <Text style={StyleAll.text4}>{tourdetail.Days} ngày {tourdetail.Nights==0 ?'':`${tourdetail.Nights} đêm`} </Text>
                         <Text style={StyleTour.text1}>Nơi đi: {noidi}</Text>
                         <Text style={StyleTour.text1}>Nơi đến : {noiden}</Text>
                         <Text style={StyleTour.text1}>Phương tiện : {ptien}</Text>
-                        <Text style={StyleTour.text1}>Ngày khởi hành : {gkhanh.slice(0,10)}</Text>
+                        <Text style={StyleTour.text1}>Ngày khởi hành : {gkhanh}</Text>
                         <Text style={StyleTour.text1}>Giá vé người lớn : {tourdetail.Adult_price}  VNĐ</Text>
                         <Text style={StyleTour.text1}>Giá vé trẻ em : {tourdetail.Children_price} VNĐ</Text>
                         <RenderHTML contentWidth={width} source={{html: tourdetail.Description}} />
                     </Card.Content>
 
-                    {anh.map(t=> 
-                        <Card.Cover style={MyStyle.image} source={{uri: `https://tlinh.pythonanywhere.com/static${t.Path}`}}></Card.Cover>
-                        // console.log(`https://tlinh.pythonanywhere.com/static${t.Path}`)
-                    )}
+                    
+                        {/* {image.map((image) => (
+                        <div key={image.id}> 
+                            {image.album_id === anh ? (
+                            <Text>{image.Path}</Text> 
+                            ) : (
+                            <Text>No image available for this album.</Text>
+                            )}
+                        </div>
+                        ))} */}
+                {/* {image.map(i=>
+                {
+                    switch (`${t.album_id}`) {
+                        case 10:
+                            <Card.Cover style={StyleAll.imgincard} source={{ uri: `https://res.cloudinary.com/dqcjhhtlm/${t.Path}` }}/>
+                            break;
+                        
+                        default:
+                            <Text>Hello</Text>
+                            break;
+                    } 
+                })}
+                 */}
+                 {image.map(i=>{
+                    if(i.album_id==anh)
+                    {
+                        return (
+                            <Card style={{marginTop:15}}>
+                                <Card.Cover source={{
+                            uri: `https://res.cloudinary.com/dqcjhhtlm/${i.Path}`}} />
+                            </Card>
+                           
+                        )
+                    }
+                 })}
+                
+
+                    
                     {user!==null?<>
                         {active? <>
                     <TouchableOpacity onPress={create_like}><Icon source="heart" color={MD3Colors.error50} size={30}></Icon></TouchableOpacity>
@@ -238,20 +287,26 @@ const TourDetail = ({ navigation,route }) => {
                     </>:<>
                     </>}
                     
+                  
                     
-                       
+
                     
+                     
                     {cmt===null?<ActivityIndicator />:<>
-                        {cmt.map(c => <List.Item style={StyleTour.cmtt} left={()=><RenderHTML contentWidth={width} source={{html:c.content}}/>} right={()=><Avatar.Image size={40}  source={{uri: `https://res.cloudinary.com/dqcjhhtlm/image/upload/fnnue6vhv7tnwtob8mwy.png`}} />}/>)}</>}
-                    
+                        {cmt.map(c => <List.Item style={StyleTour.cmtt} left={()=>
+                            <RenderHTML contentWidth={width} source={{html:c.content}}/>} 
+                            right={()=><Avatar.Image size={40}  
+                            source={{uri: `https://res.cloudinary.com/dqcjhhtlm/${c.user}`}} 
+                            />}/>)}</>}
 
-
-                     {/* {cmt===null?<ActivityIndicator />:<>
-                        {cmt.map(c => {<List.Item    
-                                right={() => 
-                                    <Avatar.Image size={40}  source={{uri: `https://tlinh.pythonanywhere.com/static${c.user.Avatar}`}} />} 
-                                left={()=><RenderHTML contentWidth={width} source={{html: c.content}} />}/>})}
-                     </>} */}
+                   
+                        {/* {cmt===null?<Text>Hãy là người bình luận đầu tiên</Text>:<></>}
+                       
+                            {customer.map(us=>{
+                                if(us.username == 'YNgan')
+                                    return(<Text>Hello</Text>)
+                            })}
+                        */}
                      
                     
                     <View>

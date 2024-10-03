@@ -104,7 +104,13 @@ class BlogForm(forms.ModelForm):
         model = Blog
         fields = '__all__'
 
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    form = BlogForm
 
+    class Meta:
+        model= Blog
+        fields='__all__'
 
 class ScheduleTimeAdmin(admin.ModelAdmin):
     list_display = ['DepartureTime']
@@ -180,6 +186,15 @@ class TransportCarAdmin(admin.ModelAdmin):
         fields = '__all__'
 
 
+class BookTicketAdmin(admin.ModelAdmin):
+    list_display = ['id_bookticket','Quantity_Adult','Quantity_Children','user_book']
+    search_fields = ['id_bookticket']
+
+    class Meta:
+        model = BookTicket
+        fields = '__all__'
+
+
 # Register your models here.
 admin_site.register(News, NewsAdmin)
 admin_site.register(Tour, TourAdmin)
@@ -190,13 +205,13 @@ admin_site.register(CMT_Tour)
 admin_site.register(Image, ImageAdmin)
 admin_site.register(Album)
 admin_site.register(Customer, CustomerAdmin)
-admin_site.register(BookTicket)
+admin_site.register(BookTicket, BookTicketAdmin)
 admin_site.register(TransportCar, TransportCarAdmin)
 admin_site.register(TransportPLane, TransportPlaneAdmin)
 admin_site.register(ScheduleTime,ScheduleTimeAdmin)
 admin_site.register(Tag)
 admin_site.register(Place)
-admin_site.register(Blog)
+admin_site.register(Blog, BlogAdmin)
 admin_site.register(BookHotel)
 admin_site.register(Room)
 admin_site.register(HotelRoom, HotelRoomAdmin)

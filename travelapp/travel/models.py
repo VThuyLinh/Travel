@@ -44,7 +44,7 @@ class SeatClass(models.TextChoices):
 class User(AbstractUser):
     username = models.CharField(max_length=20, null=False, default='OK', unique=True)
     password = models.CharField(max_length=300, null=False)
-    sdt = models.CharField(max_length=10, null=False, unique=True)
+    sdt = models.CharField(max_length=10, null=False)
     address = models.TextField(max_length=300, null=True)
     vaitro = models.CharField(choices=VaiTro.choices, max_length=30, default="Customer")
     Avatar = CloudinaryField(null=False)
@@ -164,8 +164,7 @@ class News(DateGeneral):
 
 class CMT(DateGeneral):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = RichTextField()
-    image = CloudinaryField(null=True)
+    image = CloudinaryField(null=True, default="https://cloundinary")
 
     class Meta:
         abstract = True
@@ -173,14 +172,14 @@ class CMT(DateGeneral):
 
 class CMT_News(CMT):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
-
+    content = models.CharField(max_length=255)
     def __str__(self):
         return "%s %s %s" % (self.content, self.user, self.news)
 
 
 class CMT_Tour(CMT):
     tour = models.ForeignKey(Tour, on_delete=models.PROTECT)
-
+    content = models.CharField(max_length=255)
     def __str__(self):
         return "%s %s %s" % (self.content, self.user, self.tour)
 
@@ -195,7 +194,7 @@ class Rating_Tour(DateGeneral):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     Active = models.BooleanField(default=False)
 
     class Meta:
@@ -266,7 +265,7 @@ class Tag(DateGeneral):
 class Blog(DateGeneral):
     name = models.CharField(max_length=1000)
     content = RichTextField()
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True, default=14)
     active = models.BooleanField(default=True)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=False)
     user_post = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False, default=1)
@@ -285,7 +284,7 @@ class Like_Blog(Like):
 
 class CMT_Blog(CMT):
     blog = models.ForeignKey(Blog, on_delete=models.PROTECT)
-
+    content = models.CharField(max_length=255)
     def __str__(self):
         return "%s %s %s" % (self.content, self.user, self.blog)
 
@@ -299,14 +298,13 @@ class BookTicket(DateGeneral):
                                       related_name='ScheduleTime.Tour_set+')
     OneOrReturn = models.BooleanField(default=True)
     DeparturePlace = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Place.Tour_set+')
-    Destination = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Schedule.Tour_set+')
+    Destination = models.ForeignKey(Place, on_delete=models.CASCADE, null=False, related_name='Place.Tour_set+')
     Quantity_Adult = models.IntegerField(default=1)
     Quantity_Children = models.IntegerField(default=0)
     SeatClass = models.CharField(choices=SeatClass.choices, max_length=30, default="Economy_class")
     user_book = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False, default=1)
 
-    def __str__(self):
-        return self.DeparturePlace
+
 
 
 class HotelRoom(models.Model):

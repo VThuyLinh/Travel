@@ -250,4 +250,16 @@ class Migration(migrations.Migration):
                 ('id_customer_bt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='travel.customer')),
             ],
         ),
+        migrations.CreateModel(
+            name='Like_Hotel',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Active', models.BooleanField(default=False)),
+                ('hotel', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='travel.hotel')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='travel.customer')),
+            ],
+            options={
+                'unique_together': {('hotel', 'user')},
+            },
+        ),
     ]

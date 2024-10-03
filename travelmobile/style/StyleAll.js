@@ -37,6 +37,18 @@ export default StyleSheet.create({
         marginTop:10,
         color:"#153050",
         textAlign:"right"
+    },input: {
+        width: "100%",
+        height: 50,
+        padding: 5,
+        marginBottom: 5,
+        marginTop: 5,
+        backgroundColor: "lightgray"
+    },button:{
+        backgroundColor:"blue",
+        color:"white",
+        textAlign:"center",
+        padding:10
     }, text5:{
         fontSize:20,
         marginBottom:5,

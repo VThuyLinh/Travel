@@ -35,7 +35,7 @@ const News =({navigation}) =>
                     <Card.Content>
                     <Text style={StyleAll.text1}>{c.Name_News}</Text>
                     </Card.Content>
-                    <Card.Cover source={{ uri:`${c.image_thumbnail}`.replace("https://tlinh.pythonanywhere.com/news/","https://tlinh.pythonanywhere.com/static/news/") }} />
+                    <Card.Cover source={{ uri:`https://res.cloudinary.com/dqcjhhtlm/${c.image_thumbnail}` }} />
                     <Text style={StyleAll.text2}>Ngày đăng: {moment(c.DatePost).fromNow()}</Text>
                    
                     <Card.Actions>

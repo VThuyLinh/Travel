@@ -29,9 +29,10 @@ class ImageViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = serializers.ImageSerializer
 
 
-class CustomerViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
+class CustomerViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
     queryset = Customer.objects
     serializer_class = serializers.CustomerSerializer
+    parser_classes = [parsers.MultiPartParser, ]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -59,28 +60,70 @@ class CustomerViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TourViewSet(viewsets.ViewSet, generics.ListAPIView):
+class TourViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Tour.objects.filter(Active=True)
-    serializer_class = serializers.TourSerializer
+    serializer_class = serializers.TourSerializerDetail
     pagination_class = paginators.TourPaginator
+    permission_classes = [permissions.AllowAny]
 
-    def get_queryset(self):
-        queryset = self.queryset
-        q = self.request.query_params.get('Price')
-        if q:
-            queryset = queryset.filter(Adult_price=float(q))
+    def get_permissions(self):
+        if self.action in ['add_comment', 'like']:
+            return [permissions.IsAuthenticated()]
 
-        DeparturePlace = self.request.query_params.get('noidi')
-        Destination = self.request.query_params.get('noiden')
-        if DeparturePlace:
-            queryset = queryset.filter(DeparturePlace__Place_Name__icontains=DeparturePlace)
-        if Destination:
-            queryset = queryset.filter(Destination__Place_Name__icontains=Destination)
-        DepartureTime = self.request.query_params.get('thoigiandi')
+        return [permissions.AllowAny()]
 
-        if DepartureTime:
-            queryset = queryset.filter(DepartureTime__DepartureDay__icontains=DepartureTime)
-        return queryset
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return serializers.AuthenticatedTourDetailsSerializer
+
+        return self.serializer_class
+
+    @action(methods=['get'], url_path='comments', detail=True)
+    def get_comments(self, request, pk):
+        comments = self.get_object().CMT_Tour_set.select_related('customer').order_by('-id')
+
+        paginator = paginators.CommentPaginator()
+        page = paginator.paginate_queryset(comments, request)
+        if page is not None:
+            serializer = serializers.CMT_TourSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        return Response(serializers.CMT_TourSerializer(comments, many=True).data)
+
+    @action(methods=['post'], url_path='add_comments', detail=True)
+    def add_comment(self, request, pk):
+        c = CMT_Tour.objects.create(content=request.data.get('content'),tour=self.get_object(),
+                                                  user=request.user)
+        return Response(serializers.CMT_TourSerializer(c).data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['post'], url_path='like', detail=True)
+    def like(self, request, pk):
+        li, created = Like_Tour.objects.get_or_create(tour=self.get_object(),
+                                                      customer=request.customer)
+        if not created:
+            li.active = not li.active
+            li.save()
+
+        return Response(serializers.AuthenticatedTourDetailsSerializer(self.get_object()).data)
+
+
+def get_queryset(self):
+    queryset = self.queryset
+    q = self.request.query_params.get('Price')
+    if q:
+        queryset = queryset.filter(Adult_price=float(q))
+
+    DeparturePlace = self.request.query_params.get('noidi')
+    Destination = self.request.query_params.get('noiden')
+    if DeparturePlace:
+        queryset = queryset.filter(DeparturePlace__Place_Name__icontains=DeparturePlace)
+    if Destination:
+        queryset = queryset.filter(Destination__Place_Name__icontains=Destination)
+    DepartureTime = self.request.query_params.get('thoigiandi')
+
+    if DepartureTime:
+        queryset = queryset.filter(DepartureTime__DepartureDay__icontains=DepartureTime)
+    return queryset
 
 
 class TourViewSetDetail(viewsets.ViewSet, generics.RetrieveAPIView):
@@ -186,7 +229,7 @@ class NewsDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(serializers.NewsDetailSerializer(self.get_object()).data, status=status.HTTP_201_CREATED)
 
 
-class BookTourViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
+class BookTourViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.UpdateAPIView):
     queryset = BookTour.objects
     serializer_class = serializers.BookTourSerializer
     parser_classes = [parsers.MultiPartParser, ]
