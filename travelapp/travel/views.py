@@ -1,5 +1,6 @@
 import datetime
 
+from django.db.models import Count
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status, parsers, permissions
 from travel.models import *
@@ -32,7 +33,6 @@ class ImageViewSet(viewsets.ViewSet, generics.ListAPIView):
 class CustomerViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
     queryset = Customer.objects
     serializer_class = serializers.CustomerSerializer
-    parser_classes = [parsers.MultiPartParser, ]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -78,22 +78,11 @@ class TourViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
         return self.serializer_class
 
-    @action(methods=['get'], url_path='comments', detail=True)
-    def get_comments(self, request, pk):
-        comments = self.get_object().CMT_Tour_set.select_related('customer').order_by('-id')
-
-        paginator = paginators.CommentPaginator()
-        page = paginator.paginate_queryset(comments, request)
-        if page is not None:
-            serializer = serializers.CMT_TourSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        return Response(serializers.CMT_TourSerializer(comments, many=True).data)
 
     @action(methods=['post'], url_path='add_comments', detail=True)
     def add_comment(self, request, pk):
-        c = CMT_Tour.objects.create(content=request.data.get('content'),tour=self.get_object(),
-                                                  user=request.user)
+        c = CMT_Tour.objects.create(content=request.data.get('content'), tour=self.get_object(),
+                                    user=request.user)
         return Response(serializers.CMT_TourSerializer(c).data, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], url_path='like', detail=True)
@@ -130,20 +119,15 @@ class TourViewSetDetail(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Tour.objects.filter(Active=True)
     serializer_class = serializers.TourSerializerDetail
 
-    @action(methods=['post'], url_path='create_cmt_tour', detail=True)
-    def create_cmt_tour(self, request, pk):
-        cmt_tour = self.get_object().cmt_tour_set.create(content=request.data.get('content'), user=request.user)
-        return Response(serializers.CMT_TourSerializer(cmt_tour).data)
-
     @action(methods=['post'], url_path='create_rating_tour', detail=True)
     def create_rating_tour(self, request, pk):
         rating_tour = self.get_object().rating_tour_set.create(NumberOfStart=request.data.get('NumberOfStart'),
-                                                               user=request.user)
+                                                               user=request.user, image=request.data.get('image'))
         return Response(serializers.CMT_TourSerializer(rating_tour).data)
 
     @action(methods=['get'], url_path='get_like_tour', detail=True)
     def like_tour(self, request, pk):
-        like_tour = Like_Tour.objects
+        like_tour = Like_Tour.objects.annotate(counter=Count('tour')).values('tour', 'counter')
         return Response(serializers.Like_TourSerializer(like_tour, many=True).data)
 
     @action(methods=['post'], url_path='like_tour', detail=True)
@@ -190,32 +174,36 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
         return Response(serializers.UserSerializer(user).data)
 
 
-class NewsViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
+class NewsViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = News.objects.filter(active=True)
     serializer_class = serializers.NewsSerializer
+    pagination_class = paginators.BlogPagination
 
     def get_queryset(self):
         queryset = self.queryset
         q = self.request.query_params.get('news')
         if q:
             queryset = queryset.filter(Name_News__icontains=q)
-        return queryset
+            return queryset
 
 
 class NewsDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
-    queryset = News.objects
+    queryset = News.objects.filter(active=True)
     serializer_class = serializers.NewsDetailSerializer
+    pagination_class = paginators.BlogPagination
+    permission_classes = [permissions.AllowAny]
 
-    @action(methods=['delete'], url_path='delete_news', detail=True)
-    def delete(self, request, pk):
-        queryset = News.objects.get(pk=pk)
-        queryset.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_permissions(self):
+        if self.action in ['add_comment', 'like']:
+            return [permissions.IsAuthenticated()]
 
-    @action(methods=['post'], url_path='create_cmt_news', detail=True)
-    def create_cmt_tour(self, request, pk):
-        cmt_news = self.get_object().cmt_news_set.create(content=request.data.get('content'), user=request.user)
-        return Response(serializers.CMT_NewsSerializer(cmt_news).data)
+        return [permissions.AllowAny()]
+
+    @action(methods=['post'], url_path='add_comments_news', detail=True)
+    def add_comment(self, request, pk):
+        c = CMT_News.objects.create(content=request.data.get('content'), news=self.get_object(),
+                                    user=request.user, image=request.data.get('image'))
+        return Response(serializers.CMT_NewsSerializer(c).data, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], url_path='like_news', detail=True)
     def like(self, request, pk):
@@ -227,6 +215,8 @@ class NewsDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
             li.save()
 
         return Response(serializers.NewsDetailSerializer(self.get_object()).data, status=status.HTTP_201_CREATED)
+
+
 
 
 class BookTourViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.UpdateAPIView):
@@ -307,10 +297,38 @@ class BookTicketViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         return queryset
 
 
-class BlogViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
-    queryset = Blog.objects
+class BlogAllViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = Blog.objects.filter(active=True)
     serializer_class = serializers.BlogSerializer
-    parser_classes = [parsers.MultiPartParser, ]
+    pagination_class = paginators.BlogPagination
+
+    def get_queryset(self):
+        queryset = self.queryset
+        q = self.request.query_params.get('content')
+        if q:
+            queryset = queryset.filter(content__icontains=q)
+
+        return queryset
+
+class BlogViewSet(viewsets.ViewSet, generics.RetrieveAPIView, generics.CreateAPIView):
+    queryset = Blog.objects.filter(active=True)
+    serializer_class = serializers.BlogSerializer
+    pagination_class = paginators.BlogPagination
+    permission_classes = [permissions.AllowAny]
+
+    def get_permissions(self):
+        if self.action in ['add_comment', 'like']:
+            return [permissions.IsAuthenticated()]
+
+        return [permissions.AllowAny()]
+
+
+
+    @action(methods=['post'], url_path='add_comments_blog', detail=True)
+    def add_comment(self, request, pk):
+        c = CMT_Blog.objects.create(content=request.data.get('content'), blog=self.get_object(),
+                                    user=request.user, image=request.data.get('image'))
+        return Response(serializers.CMT_BlogSerializer(c).data, status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], url_path='get_blog', detail=True)
     def get_queryset(self):
@@ -319,12 +337,6 @@ class BlogViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         if id:
             queryset = queryset.filter(id__icontains=id)
         return queryset
-
-    @action(methods=['delete'], url_path='delete_blog', detail=True)
-    def delete(self, request, pk):
-        queryset = Blog.objects.get(pk=pk)
-        queryset.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['post'], url_path='create_cmt_blog', detail=True)
     def create_cmt_blog(self, request, pk):
@@ -437,6 +449,12 @@ class CMT_BlogViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.Retrie
     queryset = CMT_Blog.objects.all()
     serializer_class = serializers.CMT_BlogSerializer
     permission_classes = [permission.CMTOwner]
+
+    @action(methods=['delete'], url_path='delete_cmt_blog', detail=True)
+    def delete(self, request, pk):
+        queryset = CMT_Blog.objects.get(pk=pk)
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class Rating_TourViewSet(viewsets.ViewSet, generics.RetrieveAPIView, generics.DestroyAPIView):

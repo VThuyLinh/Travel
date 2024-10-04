@@ -3,10 +3,14 @@ import { Avatar, Button, Card, Dialog, HelperText, PaperProvider, Portal, TextIn
 import StyleAll from "../../style/StyleAll";
 import APIs, { endpoints } from "../../config/APIs";
 import { useNavigation } from "@react-navigation/native";
-import React, { useContext, useState } from "react";
+import React, { useContext} from "react";
+import { useState } from "react";
 import { MyUserContext } from "../../config/context";
 import { Alert } from "react-native";
 import { formatCurrency, getSupportedCurrencies } from "react-native-format-currency";
+import Code from "../../component/code/code"
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BookTour =({route})=>{
     const user = useContext(MyUserContext);
@@ -18,83 +22,57 @@ const BookTour =({route})=>{
     const Destination = route.params?.Destination;
     const vehicle= route.params?.vehicle;
     const DepartureDay = route.params?.DepartureDay;
+    const DepartureTime = route.params?.DepartureTime;
     const Days= route.params?.Days;
     const Tour_Name= route.params?.Tour_Name;
-    const lisence= route.params?.lisence;
     const Nights= route.params?.Nights;
-    const fields = [{
-    
-        "label": "Họ",
-        "icon": "card-account-phone-outline",
-        "name": "FirstName_BookTour",
-        "value": user?.first_name
-    },{
-        "label": "Tên",
-        "icon": "card-account-phone-outline",
-        "name": "LastName_BookTour",
-        "value": user?.last_name
-    }, {
-        "label": "Email",
-        "icon": "email-outline",
-        "name": "Email_BookTour",
-        "value": user?.email
-    }
-    , {
-        "label": "Số điện thoại",
-        "icon": "cellphone-basic",
-        "keyboardType":"numeric",
-        "name": "Phone_BookTour",
-        "value": user?.sdt
-    },
-    {
-        "label": "Người lớn",
-        "icon": "human-male",
-        "keyboardType":"numeric",
-        "name": "Quantity_Adult",
-        "default":"1"
-    },
-    {
-        "label": "Trẻ em",
-        "icon": "baby-face-outline",
-        "keyboardType":"numeric",
-        "name": "Quantity_Children",
-        "default":"0"
-       
-    }];
+    const [qadult, setQAdult] = React.useState('');
+    const [token, setToken]= React.useState('');
+    const [qchildren, setQChildren] = React.useState('');
+    const [code, setCode]= React.useState('');
     const [loading, setLoading] = React.useState(false);
-    // const [error, setError] = React.useState(false);
     const nav = useNavigation();
-    const [bk, setBK]= useState({"FirstName_BookTour":user.first_name,"LastName_BookTour":user.last_name,"Email_BookTour":user.email,"Phone_BookTour":user.sdt,"Quantity_Adult":1,"Quantity_Children":0});
 
+    const generateRandomString = () => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const length = 10; 
+        let result = '';
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);   
+    
+        }
+        setCode(result);   
+    
+      };
+    
+
+   
+    console.warn(id_tour_id,qadult,qchildren,Adult_price,Children_price,qadult*Adult_price,qchildren*Children_price,user.id)
     const booktour = async () => {
-        
+                let formData={
+                    id_booktour: code,
+                    Quantity_Adult: qadult,
+                    Quantity_Children: qchildren,
+                    Price: qadult*Adult_price + qchildren*Children_price,
+                    id_customer_bt: user.id,
+                    id_tour_id: id_tour_id        
+                }
+                AsyncStorage.getItem("token").then((value)=>{
+                    setToken(value)})
+                    console.warn(token);
                 setLoading(true)
                 try {
-                    
-                    let form = new FormData();
-                    
-                    for (let key in bk)
-                        {
-                            form.append(key, bk[key]);
-                        }
-                    console.log(bk);
-                    form.append("id_tour_id",id_tour_id); 
-                    form.append("id_customer_bt",user.id); 
-                    form.append("DeparturePlaceBookTour",DeparturePlace); 
-                    form.append("DepartureTimeBookTour",DepartureDay); 
-                    form.append("DestinationBookTour",Destination); 
-                    form.append("DaysBookTour",Days);    
-                    form.append("NightsBookTour",Nights); 
-                    form.append("vehicleBookTour",vehicle);
-                    form.append("TourName",Tour_Name);
-                    form.append("children_price",Children_price);
-                    form.append("adult_price",Adult_price);
-                    console.info(form);
-        
-
-                    let res = await APIs.post(endpoints['booktour'], form, {headers: {'Content-Type': 'multipart/form-data'}});
-                    if (res.status === 201)
-                       nav.navigate("MyTour");
+                    axios.post(`https://thuylinh.pythonanywhere.com/BookTour/${id_tour_id}/`,formData,{
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data'
+                        },
+                })
+                    .then((respone)=>console.log(respone))
+                    .catch((err)=>console.error(err.request))
+                    nav.navigate("Home");
+                  
                        
                     
                 } catch (ex) {
@@ -106,27 +84,38 @@ const BookTour =({route})=>{
                 }
             }
         
-    
-            const updateState = (field, value) => {
-                setBK( t => {
-                    return { ...t, [field]: value }
-                })
-                console.log(bk.response);
-            }
-        
            
     return (
     <View>
             <ScrollView>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            {fields.map(f => <TextInput value={f.value} defaultValue={f.default} onChangeText={t=> updateState(f.name,t) } key={f.name} style={StyleAll.margin} label={f.label} secureTextEntry={f.secureTextEntry} keyboardType={f.keyboardType} right={<TextInput.Icon icon={f.icon} />} />)}
-            <Text>Tổng tiền vé người lớn : {(bk.Quantity_Adult*Adult_price)}</Text>
-            <Text>Tổng tiền vé trẻ em : {(bk.Quantity_Children*Children_price)}</Text>
-            <Text>Tổng tiền : {(bk.Quantity_Adult*Adult_price)+(bk.Quantity_Children*Children_price)}</Text>
+            <Card>
+                <Card.Content>
+                    <Text>Thông tin chuyến đi</Text>
+                    <Text>Tour_Name :{Tour_Name}</Text>
+                    <Text>Nơi đi :{DeparturePlace}</Text>
+                    <Text>Nơi đến :{Destination}</Text>
+                    <Text>Ngày khởi hành:{DepartureDay}</Text>
+                    <Text>Giờ khởi hành:{DepartureTime}</Text>
+                    <Text> {Days} Ngày {Nights} Đêm</Text>
+                    <Text>Phương tiện :{vehicle}</Text>  
+                </Card.Content>
+                <Card.Content>
+                    <Text>Thông tin người đặt</Text>
+                    <Text>Họ tên :{user.first_name} {user.last_name}</Text>
+                    <Text>Email :{user.email}</Text>
+                    <Text>Sdt :{user.sdt}</Text>
+                </Card.Content>
+            </Card>
+            <TextInput placeholder="Người lớn" style={StyleAll.input} onChangeText={(value)=>setQAdult(value)}></TextInput>
+            <TextInput placeholder="Trẻ em" style={StyleAll.input} onChangeText={(value)=>setQChildren(value)}></TextInput>
+            <Text>Tổng tiền vé người lớn : {(qadult*Adult_price)}</Text>
+            <Text>Tổng tiền vé trẻ em : {(qchildren*Children_price)}</Text>
+            <Text>Tổng tiền : {(qadult*Adult_price)+(qchildren*Children_price)}</Text>
             </KeyboardAvoidingView>
             
             <Button style={StyleAll.margin}  loading={loading} icon="bag-personal" mode="contained"  
-            onPress ={()=> { booktour() ; Alert.alert('Bạn đã đăng ký thành công. Hãy thanh toán trước 24h để được xác nhận nhé')}} >
+            onPress ={()=> { booktour();generateRandomString() ; Alert.alert('Bạn đã đặt chuyến đi thành công. Hãy thanh toán trong 8h để được xác nhận nhé')}} >
                     Đặt chuyến đi 
             </Button>
             

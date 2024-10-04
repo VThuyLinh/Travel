@@ -161,7 +161,6 @@ const Signup=()=>{
         axios.post('https://thuylinh.pythonanywhere.com/Customer/',formData)
         .then((respone)=>console.log(respone))
         .catch((err)=>console.error(err.request))
-        if (res.status === 201)
         nav.navigate("Login");
     }
 

@@ -5,7 +5,7 @@ export const endpoints = {
     'tour':'/Tour/',
     'news':'/News/',
     'tourdetail':(tour_id) => `/TourDetail/${tour_id}/`,
-    'newsdetail':(news_id)=> `NewsDetail/${news_id}/`,
+    'newsdetail':(news_id)=> `/NewsDetail/${news_id}/`,
     'image':`/Image/`,
     'login': '/o/token/',
     'current-user': '/User/current-user/',
@@ -13,12 +13,17 @@ export const endpoints = {
     'user':'/User/',
     'booktour':'/BookTourTravel/',
     'booktourdetail':'/BookTourDetail/',
-    'cmt_tour': (tour_id) => `/TourDetail/${tour_id}/create_cmt_tour/`,
+    'cmt_blog': (blog_id) => `/Blog/${blog_id}/add_comments_blog/`,
+    'cmt_tour': (tour_id) => `/TourDetail/${tour_id}/add_comments/`,
+    'cmt_news': (news_id) => `/News/${news_id}/add_comments_news/`,
+    'like_news': (news_id) => `/NewsDetail/${news_id}/like_news/`,
     'like_tour': (tour_id) => `/TourDetail/${tour_id}/like_tour/`,
+    'like_blog': (blog_id) => `/BlogDetail/${blog_id}/like_news/`,
+    'like_hotel': (hotel_id) => `/HotelDetail/${hotel_id}/like_hotel/`,
     'rating_tour': (tour_id) => `/TourDetail/${tour_id}/create_rating_tour/`,
-    'cmt_news': (news_id) => `/NewsDetail/${news_id}/create_cmt_news/`,
-    'cmt_tour1':'/CMT_Tour/',
-    'blog':'/Blog/'
+    'blog':'/BlogAll/',
+    'blogdetail':(blog_id) => `/Blog/${blog_id}/`,
+    'booktour':'/BookTour/'
 };
 
 export const authApi = (token) => {
@@ -26,8 +31,6 @@ export const authApi = (token) => {
         baseURL: BASE_URL,
         headers: {
             'Authorization': `Bearer ${token}`,
-            'withCredentials': true,
-            'crossdomain':true
         }
     })
 }

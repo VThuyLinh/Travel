@@ -1,6 +1,6 @@
 import { ImageBackground, RefreshControl, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
 import { ActivityIndicator, Button, Card, Chip, DataTable, Searchbar, SegmentedButtons, Text } from "react-native-paper"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import APIs, { endpoints } from "../../config/APIs"
 import moment from "moment"
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -11,6 +11,8 @@ import { isCloseToBottom } from "../Utils/util"
 import Calendar from "../Calendar/Calendar"
 import { Image } from "react-native"
 import StyleAll from "../../style/StyleAll"
+import { MyUserContext } from "../../config/context"
+import StyleTour from "../../style/StyleTour"
 
 
 
@@ -22,9 +24,12 @@ import StyleAll from "../../style/StyleAll"
 
 const Tour =({navigation}) =>
     {
+        const user= useContext(MyUserContext);  
+
         const [tour,setTour]=React.useState([]);
-        const [DeparturePlace, setDeparturePlace] = React.useState("");
+       
         const [page, setPage]= React.useState(1);
+        const [DeparturePlace, setDeparturePlace] = React.useState("");
         const [Destination, setDestination] = React.useState("");
         const [DepartureTime, setDepartureTime] = React.useState("");
         const [price, setPrice] = React.useState("");
@@ -127,18 +132,14 @@ const Tour =({navigation}) =>
                     </Card.Content>
                     {loading && <ActivityIndicator />}
                     <Card.Cover style={StyleAll.imgincard} source={{ uri: `https://res.cloudinary.com/dqcjhhtlm/${c.cover}` }}/>
-                    <View>
-                     
-                    {/* <Card.Cover
-                            source={{ uri: images[currentIndex] }}
-                            onLoad={() => {
-                                const randomIndex = Math.floor(Math.random() * images.length);
-                                setCurrentIndex(randomIndex);}}>
-                    </Card.Cover> */}
-                    </View>
+                    
                     <Text style={StyleAll.text2}>Ngày đăng: {moment(c.DatePost).fromNow()}</Text>
                     <Card.Actions>
+                    {user===null?<>
+                        <Text style={StyleTour.text1}>Vui lòng <Text style={[StyleTour.loginn, StyleTour.text1]}onPress={()=> navigation.navigate("Login")}>đăng nhập</Text> để có những trải nghiệm tốt nhất cùng Ethereal_Travel</Text>
+                    </>:<>
                     <TouchableOpacity onPress={()=>navigation.navigate("tourdetail",{'tour_id':c.id})} key={c.id}><Text style={StyleAll.icon}><Icon color="#153050" size={20} name="mountain-sun"></Icon>  Xem thêm</Text></TouchableOpacity>
+                    </>}
                     </Card.Actions>
                 </Card>)}
             </>}   

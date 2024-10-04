@@ -4,3 +4,6 @@ class TourPaginator(pagination.PageNumberPagination):
 
 class CommentPaginator(pagination.PageNumberPagination):
     page_size = 3
+
+class BlogPagination(pagination.PageNumberPagination):
+    page_size = 4

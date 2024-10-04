@@ -160,20 +160,6 @@ class BookTicketSerializer(serializers.ModelSerializer):
                   'user_book']
 
 
-class BlogSerializer(serializers.ModelSerializer):
-    def get_cmt_blog(self, pk):
-        blog_cmt = pk.cmt_blog_set.all()
-        return [{'user': a.user.first_name + " " + a.user.last_name, 'content': a.content} for a in blog_cmt]
-
-    def get_like_blog(self, pk):
-        blog_like = pk.like_blog_set.all()
-        return [{'user': a.user.first_name + " " + a.user.last_name, 'Active': a.Active} for a in blog_like]
-
-    class Meta:
-        model = Blog
-        fields = '__all__'
-
-
 class CustomerSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data):
@@ -201,6 +187,22 @@ class BookTourSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookTour
         fields = '__all__'
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    cmt_blog = serializers.SerializerMethodField()
+
+    def get_cmt_blog(self, pk):
+        blog_cmt = pk.cmt_blog_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name, 'content': a.content} for a in blog_cmt]
+
+    def get_like_blog(self, pk):
+        blog_like = pk.like_blog_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name, 'Active': a.Active} for a in blog_like]
+
+    class Meta:
+        model = Blog
+        fields = ['name', 'content', 'cmt_blog']
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -254,38 +256,47 @@ class CMT_TourSerializer(serializers.ModelSerializer):
 
 
 class CMT_BlogSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = CMT_Blog
-        fields = ['id', 'content', 'image', 'customer']
+        fields = ['id', 'content', 'image', 'user']
 
 
 class CMT_NewsSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = CMT_News
-        fields = ['id', 'content', 'image', 'customer']
+        fields = ['id', 'content', 'image', 'user']
 
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ['Name_News', 'image_thumbnail', 'Content']
-
+        fields = ['Name_News', 'image_thumbnail', 'content']
 
 class NewsDetailSerializer(NewsSerializer):
+    cmt_news = serializers.SerializerMethodField()
+
+
+    def get_cmt_news(self, pk):
+        news_cmt = pk.cmt_news_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name,'avatar':a.user.Avatar, 'content': a.content} for a in news_cmt]
+
+    def get_like_news(self, pk):
+        news_like = pk.like_news_set.all()
+        return [{'user': a.user.first_name + " " + a.user.last_name,'id':a.user.id, 'Active': a.Active} for a in news_like]
+
     class Meta:
         model = News
-        fields = NewsSerializer.Meta.fields + ['Content']
+        fields = ['id','Name_News','content','image_thumbnail','cmt_news']
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-
 
 # class AuthenticatedTourDetailsSerializer(TourSerializerDetail):
 #     liked = serializers.SerializerMethodField()

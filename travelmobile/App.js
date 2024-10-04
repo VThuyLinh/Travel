@@ -21,6 +21,7 @@ import Tour from './component/Tour/AllTour.js';
 import BookTourDetail from './component/Tour/BookTourDetail.js';
 import Blog from './component/Blog/BlogAll.js';
 import PostBlog from './component/Blog/PostBlog.js';
+import BlogDetail from './component/Blog/BlogDetail.js';
 
 
 
@@ -34,6 +35,7 @@ const MyStack = () => {
       <Stack.Screen name='tourdetail' component={TourDetail} options={{title: 'Chi tiết chuyến đi'}} />
       <Stack.Screen name='booktour' component={BookTour} options={{title: 'Đặt chuyến đi'}} />
       <Stack.Screen name='newsdetail' component={NewsDetail} options={{title: 'Chi tiết tin tức'}} />
+      <Stack.Screen name='blogdetail' component={BlogDetail} options={{title: 'Chi tiết tin tức'}} />
     </Stack.Navigator>
   );
 }
@@ -50,12 +52,15 @@ const MyTab = () => {
       {user === null?<>
         <Tab.Screen name="Singup" component={Signup} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="black" source="tree" />}} />
         <Tab.Screen name="Login" component={Login} options={{title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="black" source="login" />}} />
-        <Tab.Screen name="Blog" component={Blog} options={{ title: "Blog", tabBarIcon: () => <Icon size={30} color="black" source="ticket-account" />}} />
         <Tab.Screen name="News" component={News} options={{title: "Tin tức", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
-        <Tab.Screen name="PostBlog" component={PostBlog} options={{title: "Đăng bài", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
+       
+       
       </>:<>
         <Tab.Screen name="Account" component={Account} options={{ title: "Tài khoản", tabBarIcon: () => <Icon size={30} color="black" source="account" />}} />
         <Tab.Screen name="MyTour" component={BookTourDetail} options={{ title: "Chuyến đi của tôi", tabBarIcon: () => <Icon size={30} color="black" source="ticket-account" />}} />
+        <Tab.Screen name="Blog" component={Blog} options={{ title: "Blog", tabBarIcon: () => <Icon size={30} color="black" source="ticket-account" />}} />
+        <Tab.Screen name="News" component={News} options={{title: "Tin tức", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
+        <Tab.Screen name="PostBlog" component={PostBlog} options={{title: "Đăng bài", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
         
         
       </>

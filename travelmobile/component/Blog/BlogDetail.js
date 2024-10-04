@@ -13,24 +13,24 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 // import { useCurrencyFormatter } from 'react-native-currency-formatter';
 
-const NewsDetail = ({ navigation,route }) => {
-    const [newsdetail, setNewsDetail] = React.useState([]);
-    const [cmtnews, setCommentNews]= React.useState([]);
+const BlogDetail = ({ navigation,route }) => {
+    const [blogdetail, setBlogDetail] = React.useState([]);
+    const [cmtblog, setCommentBlog]= React.useState([]);
     const [like, setLike]= React.useState([]);
     const [token, setToken]= React.useState([]);
     const [active, setActive] = React.useState(false);
     const [userall,setuserAll]= React.useState([]);
-    const news_id = route.params?.news_id;
+    const blog_id = route.params?.blog_id;
     
     const { width } = useWindowDimensions();
-    const loadNewsDetail = async() => {
+    const loadBlogDetail = async() => {
         try {
-            let res = await APIs.get(endpoints["newsdetail"](news_id));
+            let res = await APIs.get(endpoints["blogdetail"](blog_id));
             let res1 = await APIs.get(endpoints['user']);
-            setNewsDetail(res.data);
-            setCommentNews(res.data.cmt_news)
+            setBlogDetail(res.data);
+            setCommentBlog(res.data.cmt_blog)
             setuserAll(res1.data)
-            setLike(res.data.like_news)
+            setLike(res.data.like_blog)
             AsyncStorage.getItem("token").then((value)=>{
                 setToken(value)
            
@@ -44,8 +44,8 @@ const NewsDetail = ({ navigation,route }) => {
     const user= useContext(MyUserContext);  
 
     React.useEffect(() => {
-        loadNewsDetail();
-    }, [news_id]);
+        loadBlogDetail();
+    }, [blog_id]);
 
     const [visible, setVisible] = React.useState(false);
 
@@ -56,14 +56,6 @@ const NewsDetail = ({ navigation,route }) => {
     const [loading, setLoading] = React.useState(false);
     const [content, setContent]= React.useState([]);
 
-    const loadMore = ({nativeEvent}) => {
-        if (loading===false && isCloseToBottom(nativeEvent)) {
-            console.log(page);
-            setPage(parseInt(page) + 1);
-            
-        }
-    }
-
     
     const create_cmt = async () => {
         let formData={
@@ -72,7 +64,7 @@ const NewsDetail = ({ navigation,route }) => {
         
         setLoading(true)
         try {
-            axios.post(`https://thuylinh.pythonanywhere.com/NewsDetail/${news_id}/add_comments_news/`,formData,{
+            axios.post(`https://thuylinh.pythonanywhere.com/Blog/${blog_id}/add_comments_blog/`,formData,{
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -92,9 +84,12 @@ const NewsDetail = ({ navigation,route }) => {
         }
     }
 
-    React.useEffect(() => {
-        loadNewsDetail();
-    }, [news_id]);
+    // const updateState = (field, value) => {
+    //     setCommentBlog( t => {
+    //         return { ...t, [field]: value }
+    //     })
+    //     console.log(cmtTour);
+    // }
 
     const create_like= async() =>{
         setLoading(true);
@@ -103,7 +98,7 @@ const NewsDetail = ({ navigation,route }) => {
         }
         try {
             setActive(active? false: true);
-            axios.post(`https://thuylinh.pythonanywhere.com/NewsDetail/${news_id}/like_news/`,formData,{
+            axios.post(`https://thuylinh.pythonanywhere.com/Blog/${blog_id}/like_blog/`,formData,{
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -126,7 +121,7 @@ const NewsDetail = ({ navigation,route }) => {
         }
         try {
             setActive(active? false: true);
-            axios.post(`https://thuylinh.pythonanywhere.com/NewsDetail/${news_id}/like_news/`,formData,{
+            axios.post(`https://thuylinh.pythonanywhere.com/Blog/${blog_id}/like_blog/`,formData,{
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -151,23 +146,57 @@ const NewsDetail = ({ navigation,route }) => {
        
            <ScrollView style={[StyleAll.container, StyleAll.margin]} >
             
-            {newsdetail===null?<ActivityIndicator animating={true} color={'blue'} />:
-                <Card style={StyleAll.bgrcolor} key={news_id}>
+            {blogdetail===null?<ActivityIndicator animating={true} color={'blue'} />:
+                <Card style={StyleAll.bgrcolor}>
                     <Card.Content>
-                        <Text variant="titleLarge" style={StyleAll.text3}>{newsdetail.name}</Text>
-                        <Text style={StyleAll.text2}> {moment(newsdetail.DatePost).fromNow()}</Text>
-                        <RenderHTML contentWidth={width} source={{html: newsdetail.content}} />
+                    {/* .slice(0,10) */}
+                    
+                        <Text variant="titleLarge" style={StyleAll.text3}>{blogdetail.name}</Text>
+                        {userall.map(u=>{
+                        if(u.id==blogdetail.user_post)
+                        {
+                            return(
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Avatar.Image size={40} source={{uri: `https://res.cloudinary.com/dqcjhhtlm/${u.Avatar}`}}  />
+                                    <View style={{ flexDirection: 'col' }}>
+                                    <Text style={{marginLeft:20, fontSize:20}}>{u.username}</Text>
+                                    <Text style={StyleAll.text2}> {moment(blogdetail.DatePost).fromNow()}</Text>
+                                    <RenderHTML contentWidth={width} source={{html: blogdetail.content}} />
+                                    </View>
+                                </View>
+                            )
+                        }
+                        
+                    })}
                     </Card.Content>
-                </Card>
-            }
                 
-                
-               
+                    {/* {like.map(l=>{
+                        if(l.id==user.id)
+                            if(l.Active===true)
+                                {
+                                    return(
+                                        <View style={{ flexDirection: 'row' }}><Text>{like.length}</Text><TouchableOpacity onPress={()=>dislike()}><Icon source="heart" color={MD3Colors.error50} size={30}></Icon></TouchableOpacity></View>
+                                        )
+                                }
+                            else
+                                {
+                                    return(
+                                        <View style={{ flexDirection: 'row' }}><Text>{like.length}</Text><TouchableOpacity onPress={()=>create_like()}><Icon source="heart" color={MD3Colors.secondary50} size={30}></Icon></TouchableOpacity></View>)
+                                }
+
+                    })} */}
+
                    
                     
+<View>
+                    {like===null?
+                        <View>
+                            <Text>Hãy là người bình luận đầu tiên</Text>
+                            
+                        </View>:<></>}
                     {like.map(l=>{
                         if(l.id==user.id)
-                            if(l.Active==true)
+                            if(l.active==true)
                                 {
                                     return(
                                         <View style={{ flexDirection: 'row' }}><Text>{like.length}</Text><TouchableOpacity onPress={()=>dislike()}><Icon source="heart" color={MD3Colors.error50} size={30}></Icon></TouchableOpacity></View>
@@ -180,19 +209,20 @@ const NewsDetail = ({ navigation,route }) => {
                                 }
 
                     })}
+                    </View>
                    
                     
                     <Text>{token}</Text>
                     <View>
-                        {cmtnews===null?
+                        {cmtblog===null?
                         <View>
                             <Text>Hãy là người bình luận đầu tiên</Text>
                             
                         </View>:<></>}
-                        {cmtnews===null?<ActivityIndicator />:<>
+                        {cmtblog===null?<ActivityIndicator />:<>
                             <Button onPress={showCMT}>+ Thêm bình luận</Button></>}
 
-                        {cmtnews.map (c => 
+                        {cmtblog.map (c => 
                             <List.Item style={StyleTour.cmtt} left={()=>
                                 <Avatar.Image size={40}  
                                 source={{uri: `https://res.cloudinary.com/dqcjhhtlm/${c.avatar}`}} 
@@ -201,7 +231,15 @@ const NewsDetail = ({ navigation,route }) => {
                                 right={()=> <RenderHTML contentWidth={width} source={{html:c.content}}/>}/>)}
 
                         
-                  
+                        
+                        
+                        
+
+                        
+                           
+    
+                       
+                        
                         <Portal>
                         <Dialog visible={visible} onDismiss={hideCMT}>
                         <Card >
@@ -217,10 +255,12 @@ const NewsDetail = ({ navigation,route }) => {
                          </Dialog>
                         </Portal>
                     </View>
+                </Card>
+            }
 
            </ScrollView>
          
     );
 };
 
-export default NewsDetail;
+export default BlogDetail;

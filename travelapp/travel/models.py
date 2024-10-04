@@ -47,8 +47,8 @@ class User(AbstractUser):
     sdt = models.CharField(max_length=10, null=False)
     address = models.TextField(max_length=300, null=True)
     vaitro = models.CharField(choices=VaiTro.choices, max_length=30, default="Customer")
-    Avatar = CloudinaryField(null=False)
-    Cover = CloudinaryField(null=True)
+    Avatar = models.CharField(max_length=255, null=True, default="image/upload/v1727967936/Screenshot_2024-10-03_220517_y6wixr.png")
+    Cover = models.CharField(max_length=255, null=True, default="image/upload/v1727967936/Screenshot_2024-10-03_220517_y6wixr.png")
 
     def __str__(self):
         return str(self.username)
@@ -155,7 +155,7 @@ class News(DateGeneral):
     Name_News = models.CharField(max_length=255, null=False, unique=True)
     image_thumbnail = CloudinaryField(null=True)
     active = models.BooleanField(default=True)
-    Content = RichTextField()
+    content = RichTextField()
     admin = models.ForeignKey(Admin, null=False, default=1, on_delete=models.CASCADE)
 
     def __str__(self):

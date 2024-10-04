@@ -14,7 +14,15 @@ export default StyleSheet.create({
         paddingBottom:50,
         paddingLeft:30,
         paddingRight:10,
-    }, 
+    }, car:{
+        marginBottom:10
+    },
+    text1:{
+        fontSize:20,
+        fontWeight:'bold',
+        marginBottom:8
+  
+    },
     sear:{ 
         backgroundColor:"#d6d6d6",
         marginBottom:20,
@@ -57,17 +65,11 @@ export default StyleSheet.create({
         textAlign:"right",
         marginRight:10
     },
-    text1:{
-        fontSize:18,
-        color:"#153050",
-        marginLeft:10
-    },
     text2:{
         fontSize:15,
         color:"#153050",
         marginLeft:20,
         marginBottom:5,
-        marginTop:5
     },
     text3:{
         fontSize:40,
@@ -84,9 +86,11 @@ export default StyleSheet.create({
     row: {
         flexDirection: "row",
         flexWrap: "wrap"
-    }, margin: {
+    }, 
+    margin: {
         margin: 5
-    }, avatar: {
+    },
+    avatar: {
         width: 80,
         height: 80,
         borderRadius: 20

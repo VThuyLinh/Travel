@@ -19,7 +19,7 @@ const Account = () => {
             
             <Avatar.Image style={StyleLogin.avatar}size={280} source={{uri: `https://res.cloudinary.com/dqcjhhtlm/${user.Avatar}`}} />
             
-           <Button style={StyleLogin.hello}><Text style={StyleLogin.textinhello}><Icon size={18} style={StyleLogin.m_10} name="suitcase-rolling"></Icon>  Xin chào, {user.last_name}</Text></Button>
+           <Button style={StyleLogin.hello}><Text style={StyleLogin.textinhello}><Icon size={18} style={StyleLogin.m_10} name="suitcase-rolling"></Icon>  Xin chào, {user.last_name} {user.first_name}</Text></Button>
             <List.Section>
                 <Text style={StyleLogin.text}><Icon name="envelope-open-text" size={19}/>      {user.email}</Text>
                 <Text style={StyleLogin.text}><Icon name="location-dot" size={19}/>{user.address}</Text>
