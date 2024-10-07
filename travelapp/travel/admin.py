@@ -20,18 +20,13 @@ class MyAdminSite(admin.AdminSite):
     site_header = 'Travel'
 
     def get_urls(self):
-        return [path('stats_amountimageintour/', self.stats_view)] + super().get_urls()
+        return [path('stats_amountimageintour/', self.stats_view1)] + super().get_urls()
 
     # def stats_view(self, request):
     #     stats =Album.objects.annotate(counter=Count('image_id')).values('id','Name','counter')
     #     return TemplateResponse(request, 'admin/stats.html', {
     #         'stats': stats
     #     })
-    def stats_view(self, request):
-        stats = Tour.objects.annotate(counter=Count('id_customer_bt_id')).values('id_customer_bt_id', 'counter')
-        return TemplateResponse(request, 'admin/stats.html', {
-            'stats': stats
-        })
 
     def stats_view1(self, request):
         statss = BookTour.objects.annotate(counter=Count('id_customer_bt_id')).values('FirstName_BookTour',

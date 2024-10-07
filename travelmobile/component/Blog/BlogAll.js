@@ -1,4 +1,4 @@
-import { ImageBackground, RefreshControl, SafeAreaView, ScrollView, TouchableOpacity, useWindowDimensions, View } from "react-native"
+import { ImageBackground, RefreshControl, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, useWindowDimensions, View } from "react-native"
 import { ActivityIndicator, Avatar, Button, Card, Chip, DataTable, Searchbar, SegmentedButtons, Text, TextInput } from "react-native-paper"
 import React, { useState } from "react"
 import APIs, { endpoints } from "../../config/APIs"
@@ -12,6 +12,7 @@ import { isCloseToBottom } from "../Utils/util"
 
 import StyleTour from "../../style/StyleTour"
 import StyleAll from "../../style/StyleAll"
+import { useNavigation } from "@react-navigation/native"
 
 
 
@@ -29,6 +30,7 @@ const Blog =({navigation}) =>
         const [content, setContent]= React.useState('')
         const [loading, setLoading] = React.useState(false);
         const { width } = useWindowDimensions();
+        const nav=useNavigation();
         const [collapsed, setCollapsed] = React.useState(true);
 
         const toggle = () => {
@@ -88,14 +90,17 @@ const Blog =({navigation}) =>
             <View style={StyleAll.container}>
             <RefreshControl onRefresh={() => loadBlog()} />
             <ScrollView onScroll={loadMore}>
-            <Text style={StyleAll.tourspage}> Where do you like to go ?</Text>
+            <Text style={StyleAll.tourspage}> Ethereal's Blog</Text>
+            <TouchableOpacity style={styles.button} onPress={()=>{nav.navigate("postblog")}} >
+                     <Text style={{fontSize:20, fontWeight:'bold', marginTop:8, marginLeft:16}}>+ Thêm bài đăng</Text>
+                 </TouchableOpacity>
             <View>
             <Searchbar style={StyleAll.sear} value={content} placeholder="Tìm bài đăng..." onChangeText={t => search(t, setContent)} />
             </View>
             
             {loading ? <ActivityIndicator/>:<>
                 {blog.map(b=> 
-                <Card mode="elevated"  key={b.id}> 
+                <Card mode="elevated" style={StyleAll.card1} key={b.id}> 
                     <Card.Content>
                     {user.map(u=>{
                         if(u.id==b.user_post)
@@ -118,7 +123,7 @@ const Blog =({navigation}) =>
                     <Card.Cover style={StyleAll.imgincard} source={{ uri: `https://res.cloudinary.com/dqcjhhtlm/${b.image}` }}/>  
                   
                     <TouchableOpacity style={{marginLeft:270, marginTop:10}} onPress={()=>navigation.navigate("blogdetail",{'blog_id':b.id})} key={b.id}><Text style={StyleAll.icon}><Icon color="#153050" size={20} name="mountain-sun"></Icon>  Xem thêm</Text></TouchableOpacity>
-                    <View style={{ width: '100%', height: 1.5, backgroundColor: 'black', marginBottom:8, marginTop:15  }} />    
+                    
                 </Card>)}
 
             </>}   
@@ -128,6 +133,16 @@ const Blog =({navigation}) =>
         
         );
     }
-    
+    const styles= StyleSheet.create({
+        button:{
+            backgroundColor:"#b2dbbf",
+            color:"white",
+            textAlign:"center",
+            height:44,
+            width:170,
+            marginLeft:225,
+            marginBottom:10,
+            borderRadius:20
+        }});
 
 export default Blog;

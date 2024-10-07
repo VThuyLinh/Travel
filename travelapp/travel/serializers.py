@@ -156,7 +156,7 @@ class BookHotelSerializer(serializers.ModelSerializer):
 class BookTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookTicket
-        fields = ['OneOrReturn', 'DeparturePlace', 'Destination', 'Quantity_Adult', 'Quantity_Children', 'SeatClass',
+        fields = ['OneOrReturn', 'Quantity_Adult', 'Quantity_Children', 'SeatClass',
                   'user_book']
 
 
@@ -305,6 +305,10 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
+
+
+
+
 
 # class AuthenticatedTourDetailsSerializer(TourSerializerDetail):
 #     liked = serializers.SerializerMethodField()

@@ -53,6 +53,7 @@ const Login1 = () => {
                     'type': "login",
                     'payload': user.data
                 })
+                navigation.navigate("Home")
             }, 100);
 
             
@@ -83,7 +84,7 @@ const Login1 = () => {
                     
                      <TextInput placeholder="password" style={styles.ip} onChangeText={(value)=>setPassword(value)}></TextInput>
                  </View>
-                 <TouchableOpacity style={styles.button} onPress={()=>{login(); Alert.alert('Đăng bài thành công' )}} >
+                 <TouchableOpacity style={styles.button} onPress={()=>{login(); Alert.alert('Đăng nhập thành công' )}} >
                      <Text style={{fontSize:18, fontWeight:'bold', marginTop:10, marginLeft:40}}>Đăng nhập</Text>
                  </TouchableOpacity>
             </View>

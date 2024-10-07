@@ -5,7 +5,7 @@ import APIs, { endpoints } from "../../config/APIs"
 import moment from "moment"
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import Icon from "react-native-vector-icons/FontAwesome6"
+import { Icon } from 'react-native-paper';
 import { isCloseToBottom } from "../Utils/util"
 
 import Calendar from "../Calendar/Calendar"
@@ -14,6 +14,7 @@ import StyleAll from "../../style/StyleAll"
 import { MyUserContext } from "../../config/context"
 import StyleTour from "../../style/StyleTour"
 import Location from "../Location/Location"
+import { useNavigation } from "@react-navigation/native"
 
 
 
@@ -35,6 +36,7 @@ const Tour =({navigation}) =>
         const [DepartureTime, setDepartureTime] = React.useState("");
         const [price, setPrice] = React.useState("");
         const [loading, setLoading] = React.useState(false);
+        const nav= useNavigation();
         
 
     const loadTour = async () => {
@@ -54,7 +56,7 @@ const Tour =({navigation}) =>
                 //     console.log("không tìm thấy") 
                 //     setPage(0);
             } catch (ex) {
-                console.error("Lỗi",ex);
+                console.error("Lỗi",ex.message);
             } finally {
                 setLoading(false);
             }
@@ -94,7 +96,7 @@ const Tour =({navigation}) =>
         
             <RefreshControl onRefresh={() => loadTour()} />
             <ScrollView onScroll={loadMore}>
-            <Text style={StyleAll.tourspage}> Where do you like to go ?</Text>
+            <Text style={StyleAll.tourspage}> Where do you like to go ?<Icon size={30} color="black" source="earth" /></Text>
             <View>
                 <Searchbar style={StyleAll.sear} value={q} placeholder="Tìm chuyến đi..." onChangeText={t => value==='Destination'?search(t, setDestination):value==='DeparturePlace'?search(t, setDeparturePlace):search(t, setPrice)} />
                 
@@ -113,7 +115,7 @@ const Tour =({navigation}) =>
                     {
                         value: 'DeparturePlace',
                         label: 'Nơi đi',
-                        icon:'home-outline'
+                        icon:'bus-stop'
                     },
                     {   value: 'Price', 
                         label: 'Giá' ,
@@ -122,7 +124,7 @@ const Tour =({navigation}) =>
                     ]}
                 />
             </View>
-            <View style={{  textAlign:"center", marginTop:20, marginLeft:235, marginRight:35, borderRadius:20}}>
+            <View style={{  textAlign:"center", marginTop:15, marginLeft:235, marginRight:35, borderRadius:20}}>
                 <Calendar></Calendar>
             </View>
             
@@ -131,16 +133,20 @@ const Tour =({navigation}) =>
                 {tour.map(c=> 
                 <Card mode="elevated" style={StyleAll.card} key={c.id}> 
                     <Card.Content>
-                    <Text style={StyleAll.text1}>{c.Id_Tour}</Text>
+                        <View style={{flexDirection:"row"}}>
+                        <Icon size={50} color="black" source="barcode" />
+                        <Text style={StyleAll.text1}>{c.Id_Tour}</Text>
+                        </View>
+                    
                     <Text style={StyleAll.text}>{c.Tour_Name}</Text>
                     </Card.Content>
                     {loading && <ActivityIndicator />}
                     <Card.Cover style={StyleAll.imgincard} source={{ uri: `https://res.cloudinary.com/dqcjhhtlm/${c.cover}` }}/>
                     
-                    <Text style={StyleAll.text2}>Ngày đăng: {moment(c.DatePost).fromNow()}</Text>
+                    <Text style={StyleAll.text2}><Icon size={20} source="calendar-month-outline"/>{moment(c.DatePost).fromNow()}</Text>
                     <Card.Actions>
                     {user===null?<>
-                        <Text style={StyleTour.text1}>Vui lòng <Text style={[StyleTour.loginn, StyleTour.text1]}onPress={()=> navigation.navigate("Login")}>đăng nhập</Text> để có những trải nghiệm tốt nhất cùng Ethereal_Travel</Text>
+                        <Text style={StyleTour.text1}>Vui lòng <Text style={[StyleTour.loginn, StyleTour.text1]}onPress={()=> nav.navigate("login")}>đăng nhập</Text> để có những trải nghiệm tốt nhất cùng Ethereal_Travel</Text>
                     </>:<>
                     <TouchableOpacity onPress={()=>navigation.navigate("tourdetail",{'tour_id':c.id})} key={c.id}><Text style={StyleAll.icon}><Icon color="#153050" size={20} name="mountain-sun"></Icon>  Xem thêm</Text></TouchableOpacity>
                     </>}

@@ -27,9 +27,8 @@ const Account = () => {
             
            <Button style={StyleLogin.hello}><Text style={StyleLogin.textinhello}><Icon size={18} style={StyleLogin.m_10} name="suitcase-rolling"></Icon>  Xin chào, {user.last_name} {user.first_name}</Text></Button>
             <List.Section>
-                <Text style={StyleLogin.text}><Icon name="envelope-open-text" size={19}/>      {user.email}</Text>
+                <Text style={StyleLogin.text}><Icon name="envelope-open-text" size={19}/>{user.email}</Text>
                 <Text style={StyleLogin.text}><Icon name="location-dot" size={19}/>{user.address}</Text>
-                
                 <Text style={StyleLogin.text}><Icon name="mobile-retro" size={19}/>{user.sdt}</Text>
             </List.Section>
             <Button style={StyleLogin.bnt} onPress={() => {dispatch({"type": "logout"}),log()}}><Icon size={18} color="white" name="right-from-bracket" /><Text style={StyleLogin.out}>  Đăng xuất</Text></Button>

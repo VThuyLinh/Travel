@@ -1,7 +1,7 @@
 import { useContext, useState } from "react"
 import * as Permissionss from 'expo-permissions';
 import * as Locationn from 'expo-location';
-import { Alert, Button, Linking, PermissionsAndroid, StyleSheet, Text,TouchableOpacity,View } from "react-native";
+import { Alert, Button, Image, Linking, PermissionsAndroid, StyleSheet, Text,TouchableOpacity,View } from "react-native";
 import axios from "axios";
 import { MyUserContext } from "../../config/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -65,12 +65,15 @@ const Location=()=>{
  
     
     return (
-        <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
+        <View style={{alignItems:'center'}}>
            
-            <Text>Hello</Text>
+            <Text style={{marginLeft:15,marginTop:20, marginRight:15, fontSize:18}}>Hãy chọn nút lấy vị trí bên dưới để lưu vị trí của bạn hiện tại vào dữ liệu của chúng tôi, sau này khi bạn có đến địa điểm này 1 lần nữa chúng tôi sẽ nhắc nhở với bạn về 1 kỷ niệm tuyệt vời mà bạn có !!!</Text>
             <TouchableOpacity style={styles.button} onPress={()=>{getLocation(), Alert.alert('Lưu thành công' )}} >
                      <Text style={{fontSize:18, fontWeight:'bold', marginTop:10, marginLeft:40}}>Lấy vị trí</Text>
                  </TouchableOpacity>
+            <View style={{marginTop:10}}>
+            <Image width={500} height={600} source={{uri:'https://res.cloudinary.com/dqcjhhtlm/image/upload/v1728244487/Screenshot_2024-10-07_025423_pokcm9.png'}}/>
+            </View>
         </View>
     )
 }

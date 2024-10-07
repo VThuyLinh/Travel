@@ -71,7 +71,7 @@ const GeminiChat=()=>{
                 value={userInput}
                 onSubmitEditing={SendMessage}
                 style={styles.ip}
-                placeholderTextColor="pink"/>
+                placeholderTextColor="brown"/>
                 {loading &&(
                     <ActivityIndicator 
                     size="small"

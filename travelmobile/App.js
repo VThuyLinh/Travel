@@ -27,6 +27,12 @@ import Login from './component/User/Login.js';
 import Location from './component/Location/Location.js';
 import EmailTest from './component/Email/EmailTest.js';
 import GeminiChat from './component/ChatBot/GeminiChat.js';
+import RejectTour from './component/Tour/RejectTour.js';
+import Payment from './component/Payment/Payment.js';
+import Login1 from './component/User/Login.js';
+import Hotel from './component/Hotel/AllHotel.js';
+import HotelDetail from './component/Hotel/HotelDetail.js';
+import AppCarousel from './component/test/Carousel.js';
 
 
 
@@ -40,8 +46,13 @@ const MyStack = () => {
       <Stack.Screen name='tourdetail' component={TourDetail} options={{title: 'Chi tiết chuyến đi'}} />
       <Stack.Screen name='booktour' component={BookTour} options={{title: 'Đặt chuyến đi'}} />
       <Stack.Screen name='newsdetail' component={NewsDetail} options={{title: 'Chi tiết tin tức'}} />
-     
-      <Stack.Screen name='blogdetail' component={BlogDetail} options={{title: 'Chi tiết tin tức'}} />
+      <Stack.Screen name='hoteldetail' component={HotelDetail} options={{title: ''}} />
+      <Stack.Screen name='reject' component={RejectTour} options={{title:''}}/>
+      <Stack.Screen name='blogdetail' component={BlogDetail} options={{title: ''}} />
+      <Stack.Screen name='pay' component={Payment} options={{title: ''}} />
+      <Stack.Screen name='login' component={Login1} options={{title: ''}} />
+      <Stack.Screen name='postblog' component={PostBlog} options={{title:''}}/>
+      <Stack.Screen name='mail' component={EmailTest} options={{title:''}}/>
     </Stack.Navigator>
   );
 }
@@ -54,24 +65,24 @@ const MyTab = () => {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={MyStack} options={{ title: "", tabBarIcon: () => <Icon size={30} color="black" source="airplane-takeoff" />}} />
+      <Tab.Screen name="Home" component={MyStack} options={{ title: "Home", tabBarIcon: () => <Icon size={30} color="black" source="bag-suitcase-outline" />}} />
       
       {user === null?<>
-        <Tab.Screen name="Singup" component={Signup} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="black" source="tree" />}} />
-        <Tab.Screen name="login" component={Login} options={{ title: "", tabBarIcon: () => <Icon size={30} color="black" source="tree" />}}/>
+        <Tab.Screen name="Singup" component={Signup} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="black" source="account-plus" />}} />
+        <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="black" source="account-check" />}}/>
         <Tab.Screen name="News" component={News} options={{title: "Tin tức", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
-        <Tab.Screen name="Mail" component={EmailTest} options={{title: "Mail", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
+        <Tab.Screen name="test" component={AppCarousel} options={{title: "Test", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
        
+
         
-       
       </>:<>
         <Tab.Screen name="Account" component={Account} options={{ title: "Tài khoản", tabBarIcon: () => <Icon size={30} color="black" source="account" />}} />
         <Tab.Screen name="MyTour" component={BookTourDetail} options={{ title: "Chuyến đi của tôi", tabBarIcon: () => <Icon size={30} color="black" source="ticket-account" />}} />
         <Tab.Screen name="Blog" component={Blog} options={{ title: "Blog", tabBarIcon: () => <Icon size={30} color="black" source="ticket-account" />}} />
         <Tab.Screen name="News" component={News} options={{title: "Tin tức", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
-        <Tab.Screen name="PostBlog" component={PostBlog} options={{title: "Đăng bài", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
         <Tab.Screen name="Chat" component={GeminiChat} options={{title: "Chat", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
         <Tab.Screen name="Định vị" component={Location} options={{title: "Định vị", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
+        <Tab.Screen name="Hotel" component={Hotel} options={{title: "Khách sạn", tabBarIcon: () => <Icon size={30} color="black" source="newspaper-variant-multiple-outline" />}} />
         
         
         

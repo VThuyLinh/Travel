@@ -146,11 +146,13 @@ const PostBlog =({route})=>{
             </View>
           
             <RadioButton.Group onValueChange={newValue => setTag(newValue)} value={tag} >
-                <View>
+                <View style={{flexDirection:"row", marginLeft:40}}>
                 {tagAll.map(ta=>
                      <>
-                        <Text>{ta.name}</Text>
+                        <View style={{marginLeft:10, marginRight:10, width:130, flexDirection:"row"}}>
+                        <Text style={{fontSize:18, marginTop:5, marginRight:5}}>{ta.name}</Text>
                         <RadioButton value={ta.id} />
+                        </View>
                      </>
                 )}
                 </View>
@@ -163,22 +165,19 @@ const PostBlog =({route})=>{
 
             </View>
             {an===true?<>
-                <TouchableRipple onPress={()=>{picker}}>
-                    <Text>+ Thêm hình ảnh</Text>
+                
+                <TouchableRipple style={{backgroundColor:'#b2dbbf',marginLeft:60, borderRadius:20,marginBottom:20, marginTop:20, width: 300}} onPress={()=>{picker}}>
+                    <Text style={{fontSize:18, marginTop:15,marginBottom:15,marginLeft:50, marginRight:5}}>+ Thêm hình ảnh</Text>
                 </TouchableRipple></>:<>
                 <Image width={200} height={200}
                     source={{ uri: images[so] }}/>
                 </>}
 
                 
-                   
-              
 
-           
-
-            <Button style={StyleAll.margin}  loading={loading} icon="bag-personal" mode="contained"  
+            <Button style={{backgroundColor:'#e1bc73', height:40}}  loading={loading} icon="bag-personal" mode="contained"  
             onPress ={()=> { postblog() ; Alert.alert('Đăng bài thành công')}} >
-                    Đăng bài
+                    <Text style={{fontSize:20}}>Đăng bài</Text>
             </Button>
 
             
@@ -213,7 +212,7 @@ const styles= StyleSheet.create({
         color:'black',
     },
     button:{
-        backgroundColor:"#b2dbbf",
+        backgroundColor:"#e1bc73",
         color:"white",
         textAlign:"center",
         marginTop:20,

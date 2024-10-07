@@ -20,7 +20,16 @@ export default StyleSheet.create({
     text1:{
         fontSize:20,
         fontWeight:'bold',
-        marginBottom:8
+        marginBottom:0,
+        marginTop:11,
+        marginLeft:5
+  
+    }, text14:{
+        fontSize:20,
+        fontWeight:'bold',
+        marginBottom:10,
+        marginTop:11,
+        marginLeft:5
   
     },
     sear:{ 
@@ -36,7 +45,7 @@ export default StyleSheet.create({
     text:{
         fontSize:28,
         marginBottom:10,
-        marginTop:20,
+        marginTop:5,
         color:"#153050",
         marginLeft:10
     },text4:{
@@ -64,7 +73,21 @@ export default StyleSheet.create({
         marginLeft:8,
         marginRight:8,
         marginTop:10,
-        height:650
+        height:430
+    },card1:{
+        backgroundColor:"#f3e9e7",
+        marginBottom:30,
+        marginLeft:8,
+        marginRight:8,
+        marginTop:10,
+        height:430
+    },card2:{
+        backgroundColor:"#f9e8e1",
+        marginBottom:30,
+        marginLeft:8,
+        marginRight:8,
+        marginTop:10,
+        height:390
     }, text5:{
         fontSize:20,
         marginBottom:5,
@@ -78,6 +101,7 @@ export default StyleSheet.create({
         color:"#153050",
         marginLeft:20,
         marginBottom:5,
+        marginTop:10
     },
     text3:{
         fontSize:40,

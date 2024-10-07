@@ -47,8 +47,7 @@ const News =({navigation}) =>
                 {news.map(c=> 
                 <Card mode="elevated" style={StyleAll.car} >
                     <Card.Content>
-                    <Text style={StyleAll.text1}>{c.Name_News}</Text>
-                    <Text>{c.id}</Text>
+                    <Text style={StyleAll.text14}>{c.Name_News}</Text>
                     </Card.Content>
                     <Card.Cover source={{ uri:`https://res.cloudinary.com/dqcjhhtlm/${c.image_thumbnail}` }} />
                     <Text style={StyleAll.text2}>Ngày đăng: {moment(c.DatePost).fromNow()}</Text>

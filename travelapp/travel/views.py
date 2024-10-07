@@ -403,14 +403,18 @@ class RoomHotelViewSet(viewsets.ViewSet, generics.ListAPIView):
 
 
 class HotelViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Hotel.objects
+    queryset = Hotel.objects.all()
     serializer_class = serializers.HotelSerializer
-
+    pagination_class = paginators.BlogPagination
+    permission_classes = [permissions.AllowAny]
     def get_queryset(self):
         queryset = self.queryset
         q = self.request.query_params.get('Name')
+        p = self.request.query_params.get('place')
         if q:
             queryset = queryset.filter(nameofhotel=q)
+        if p:
+            queryset = queryset.filter(place=p)
         return queryset
 
     @action(methods=['get'], url_path='get_like_hotel', detail=True)

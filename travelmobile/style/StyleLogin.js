@@ -53,7 +53,14 @@ export default StyleSheet.create({
     },
     text:{
         fontSize:20,
-        marginLeft:10,
+        marginLeft:15,
+        marginTop:10,
+        marginBottom:5,
+        marginRight:30
+    },
+    text12:{
+        fontSize:20,
+        marginLeft:15,
         marginTop:10,
         marginBottom:5
     },

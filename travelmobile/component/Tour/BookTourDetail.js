@@ -1,16 +1,18 @@
-import { Linking, RefreshControl, ScrollView, TouchableOpacity, View } from "react-native"
+import { Linking, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import StyleAll from "../../style/StyleAll"
-import { ActivityIndicator, Button, Card, Chip, List, Text } from "react-native-paper"
+import { ActivityIndicator, Button, Card, Chip, Icon, List, Text } from "react-native-paper"
 import React, { useContext, useState } from "react"
 import APIs, { endpoints } from "../../config/APIs"
 import moment from "moment"
 
-import Icon from "react-native-vector-icons/FontAwesome6"
+
 import { MyDispatchContext, MyUserContext } from "../../config/context"
 import StyleTour from "../../style/StyleTour"
 import axios from "axios"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { isCloseToBottom } from "../Utils/util"
+import { useNavigation } from "@react-navigation/native"
+
 
 
 
@@ -22,7 +24,7 @@ const BookTourDetail =({navigation}) =>
     {
         const user= useContext(MyUserContext);
         let date= new Date();
-        
+        const nav= useNavigation();
         const [booktourdetail, setBookTourDetail]=React.useState([]);
         const [tour, setTour]=React.useState([]);
         const [active, setActive]=React.useState(true);
@@ -70,7 +72,7 @@ const BookTourDetail =({navigation}) =>
             })
                 .then((respone)=>console.log(respone))
                 .catch((err)=>console.error(err.request))
-                nav.navigate("Home");
+                
               
                    
                 
@@ -83,36 +85,7 @@ const BookTourDetail =({navigation}) =>
             }
         }
         
-        const reject = async (id) => {
-            let formData={
-                State:"Reject"       
-            }
-            setLoading(loading?true:false)
-            AsyncStorage.getItem("token").then((value)=>{
-                setToken(value)})
-                console.warn(token);
-            setLoading(true)
-            try {
-                axios.patch(`https://thuylinh.pythonanywhere.com/BookTour/${id}/`,formData,{
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-            })
-                .then((respone)=>console.log(respone))
-                .catch((err)=>console.error(err.request))
-               
-              
-                   
-                
-            } catch (ex) {
-                console.log(ex);
-                
-               
-            } finally {
-                setLoading(false);
-            }
-        }
+      
 
 
         const complete = async (id) => {
@@ -166,6 +139,8 @@ const BookTourDetail =({navigation}) =>
                 {booktourdetail.map(c=> c.id_customer_bt!==user.id?<>
                     
                 </>:<>
+                <Text style={styles.tieude}>Chặng đường mà bạn đã đi  <Icon size={30} source='airplane-takeoff'/></Text>
+               
                 {booktourdetail === null ? <><ActivityIndicator/> 
                 <Text>Hiện tại bạn chưa có chuyến đi nào. Hãy chọn cho mình 
                         <Text onPress={()=> navigation.navigate("tour")}>chuyến đi</Text> để có những trải nghiệm tốt nhất cùng TL_Travel</Text></>:<>
@@ -210,8 +185,8 @@ const BookTourDetail =({navigation}) =>
                         
                         {c.State==="Wait for Paid"?<>
                         <View style={{ flexDirection: 'row' }}>
-                        <Button style={StyleTour.btn1a} onPress={()=>{payment(`${c.id}`)}}><Text style={StyleTour.text22}>Thanh toán</Text></Button>
-                        <Button style={StyleTour.btn1b} onPress={()=>reject(`${c.id}`)}><Text style={StyleTour.text22}>Hủy</Text></Button>
+                        <Button style={StyleTour.btn1a} onPress={()=>{payment(`${c.id}`),nav.navigate("pay",{'price':c.Price})}}><Text style={StyleTour.text22}>Thanh toán</Text></Button>
+                        <Button style={StyleTour.btn1b} onPress={()=>nav.navigate('reject')}><Text style={StyleTour.text22}>Hủy</Text></Button>
                         </View>
                         </>:<></>}
 
@@ -220,12 +195,11 @@ const BookTourDetail =({navigation}) =>
                             <Text>Hãy bỏ đồ vào vali và chuẩn bị đi thôi</Text>
                            <View style={{ flexDirection: 'row' }}>
                            <Button style={StyleTour.btn2} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
-                           <Button style={StyleTour.btn1b} onPress={()=>reject(`${c.id}`)}><Text style={StyleTour.text22}>Hủy</Text></Button>
+                           <Button style={StyleTour.btn1b} onPress={()=>nav.navigate('reject')}><Text style={StyleTour.text22}>Hủy</Text></Button>
                            </View>
                         </>:<></>}
 
-                        {c.State==='Complete'?
-                        <>
+                        {c.State==='Complete'?<>
                             <Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
                         </>:<></>}
                         {c.State==='Reject'?
@@ -233,10 +207,6 @@ const BookTourDetail =({navigation}) =>
                             <Button style={StyleTour.btn3} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
                         </>:<></>}
                         
-                        {c.State==='Complete'?
-                        <>
-                            <Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
-                        </>:<></>}
                         
                         
                         
@@ -252,6 +222,17 @@ const BookTourDetail =({navigation}) =>
         
         );
     }
+    const styles= StyleSheet.create({
+        tieude:{
+            fontWeight:'bold',
+            fontSize:30, 
+            marginTop:10, 
+            color:'black',
+            marginLeft:15,
+            marginBottom:10
+        },
+    });
+    
 
 export default BookTourDetail;
  
