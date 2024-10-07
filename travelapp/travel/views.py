@@ -217,7 +217,9 @@ class NewsDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(serializers.NewsDetailSerializer(self.get_object()).data, status=status.HTTP_201_CREATED)
 
 
-
+class LocationViewSet(viewsets.ViewSet, generics.RetrieveAPIView,generics.CreateAPIView):
+    queryset = location.objects
+    serializer_class = serializers.LocationSerializer
 
 class BookTourViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.UpdateAPIView):
     queryset = BookTour.objects

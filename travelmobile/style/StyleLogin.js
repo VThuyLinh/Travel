@@ -15,6 +15,7 @@ export default StyleSheet.create({
         textAlign:"center",
         padding:10
     },
+    
     m_10:{
         marginRight:10
     },

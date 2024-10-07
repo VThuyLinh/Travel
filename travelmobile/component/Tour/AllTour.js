@@ -13,6 +13,7 @@ import { Image } from "react-native"
 import StyleAll from "../../style/StyleAll"
 import { MyUserContext } from "../../config/context"
 import StyleTour from "../../style/StyleTour"
+import Location from "../Location/Location"
 
 
 
@@ -25,7 +26,7 @@ import StyleTour from "../../style/StyleTour"
 const Tour =({navigation}) =>
     {
         const user= useContext(MyUserContext);  
-
+        
         const [tour,setTour]=React.useState([]);
        
         const [page, setPage]= React.useState(1);
@@ -34,6 +35,7 @@ const Tour =({navigation}) =>
         const [DepartureTime, setDepartureTime] = React.useState("");
         const [price, setPrice] = React.useState("");
         const [loading, setLoading] = React.useState(false);
+        
 
     const loadTour = async () => {
         if (page > 0) {
@@ -58,6 +60,8 @@ const Tour =({navigation}) =>
             }
         }
     }
+
+   
 
         React.useEffect(()=>{
              loadTour();
@@ -85,8 +89,9 @@ const Tour =({navigation}) =>
 
             const items = [1, 2, 3, 4, 5,6,7];
         return(
-
+            
         <View style={StyleAll.container}>
+        
             <RefreshControl onRefresh={() => loadTour()} />
             <ScrollView onScroll={loadMore}>
             <Text style={StyleAll.tourspage}> Where do you like to go ?</Text>
@@ -96,7 +101,6 @@ const Tour =({navigation}) =>
                 <SegmentedButtons 
                     style={StyleAll.sty}
                     density="small"
-                    color={'white'}
                     value={value}
                     onValueChange={t=> {setValue(t);setQ("")}}
                     buttons={[
@@ -118,7 +122,7 @@ const Tour =({navigation}) =>
                     ]}
                 />
             </View>
-            <View>
+            <View style={{  textAlign:"center", marginTop:20, marginLeft:235, marginRight:35, borderRadius:20}}>
                 <Calendar></Calendar>
             </View>
             

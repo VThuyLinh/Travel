@@ -53,10 +53,18 @@ export default StyleSheet.create({
         marginTop: 5,
         backgroundColor: "lightgray"
     },button:{
-        backgroundColor:"blue",
         color:"white",
         textAlign:"center",
-        padding:10
+        marginTop:20,
+        marginLeft:230,
+        borderRadius:20
+    },card:{
+        backgroundColor:"#d6e7ee",
+        marginBottom:30,
+        marginLeft:8,
+        marginRight:8,
+        marginTop:10,
+        height:650
     }, text5:{
         fontSize:20,
         marginBottom:5,
@@ -99,6 +107,8 @@ export default StyleSheet.create({
         marginBottom:20,
     },
     sty:{
+        backgroundColor:'#f7f4c9',
+        borderRadius:15,
         marginLeft:10,
         marginRight:10
     },

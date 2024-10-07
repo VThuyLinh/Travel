@@ -196,7 +196,7 @@ const BlogDetail = ({ navigation,route }) => {
                         </View>:<></>}
                     {like.map(l=>{
                         if(l.id==user.id)
-                            if(l.active==true)
+                            if(l.Active==true)
                                 {
                                     return(
                                         <View style={{ flexDirection: 'row' }}><Text>{like.length}</Text><TouchableOpacity onPress={()=>dislike()}><Icon source="heart" color={MD3Colors.error50} size={30}></Icon></TouchableOpacity></View>

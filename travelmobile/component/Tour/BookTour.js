@@ -54,7 +54,7 @@ const BookTour =({route})=>{
                     id_booktour: code,
                     Quantity_Adult: qadult,
                     Quantity_Children: qchildren,
-                    Price: qadult*Adult_price + qchildren*Children_price,
+                    Price: (qadult*Adult_price + qchildren*Children_price),
                     id_customer_bt: user.id,
                     id_tour_id: id_tour_id        
                 }

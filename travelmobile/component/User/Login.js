@@ -1,22 +1,21 @@
-import { View, Text, Alert, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Alert, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import React, { useContext } from "react";
 import APIs, { authApi, endpoints } from "../../config/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+
 import { MyDispatchContext } from "../../config/context";
 import StyleAll from "../../style/StyleAll";
+import StyleLogin from "../../style/StyleLogin";
+import { useNavigation } from "@react-navigation/native";
 
 
-
-
-const Login = () => {
+const Login1 = () => {
     const [user, setUser] = React.useState({});
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
-   
+    const navigation = useNavigation();
     const [loading, setLoading] = React.useState(false);
-    const nav = useNavigation();
     const dispatch = useContext(MyDispatchContext);
 
     const updateSate = (field, value) => {
@@ -43,7 +42,7 @@ const Login = () => {
                     }
             });
             console.info(res.data);
-
+            
             await AsyncStorage.setItem("token", res.data.access_token);
             
             setTimeout(async () => {
@@ -54,38 +53,49 @@ const Login = () => {
                     'type': "login",
                     'payload': user.data
                 })
-
-                nav.navigate('Home');
             }, 100);
+
+            
         } catch (ex) {
-            console.error(ex.request);
+            console.error("Lỗi cur",ex.request);
         } finally {
             setLoading(false);
         }   
     }
+    
 
 
     return (
-        <View style={[StyleAll.container, StyleAll.margin]}>
-            <View style={styles.title}>
-                 <Text style={{fontWeight:'bold',fontSize:30, color:'black'}}>Đăng nhập</Text>
+        <View style={[StyleAll.container]}>
+            <View style={styles.center}>
+                 <Text style={styles.tieude}>Ethereal_Travel</Text>
             </View>
-           <View style={styles.form}>
-                <View style={styles.group}>
-                   
-                     <TextInput placeholder="username" style={StyleAll.input} onChangeText={(value)=>setUsername(value)}></TextInput>
-                 </View>
-                 <View style={styles.group}>
-                    
-                     <TextInput placeholder="password" style={StyleAll.input} onChangeText={(value)=>setPassword(value)}></TextInput>
-                 </View>
-                 <TouchableOpacity style={StyleAll.button} onPress={()=>login()}>
-                     <Text style={{color:'#ffffff',fontWeight:'bold'}}>Đăng nhập</Text>
-                 </TouchableOpacity>
+            <View style={styles.center}>
+                 <Text style={styles.title}>Đăng nhập</Text>
             </View>
             
+            <View style={{marginTop:20, marginLeft:25, marginRight:25, marginBottom:10}}>
+                   <TextInput placeholder="username" style={styles.ip} onChangeText={(value)=>setUsername(value)}></TextInput>
+            </View>
+           <View >
+                
+                 <View style={{ marginLeft:25, marginRight:25}}>
+                    
+                     <TextInput placeholder="password" style={styles.ip} onChangeText={(value)=>setPassword(value)}></TextInput>
+                 </View>
+                 <TouchableOpacity style={styles.button} onPress={()=>{login(); Alert.alert('Đăng bài thành công' )}} >
+                     <Text style={{fontSize:18, fontWeight:'bold', marginTop:10, marginLeft:40}}>Đăng nhập</Text>
+                 </TouchableOpacity>
+            </View>
+            <View>
+                <Image style={styles.tinyLogo} source={{uri:'https://res.cloudinary.com/dqcjhhtlm/image/upload/v1728132381/Ethereal_Travel_1_ysgitt.png'}}/>
+            </View>
+            <View>
+                <Image style={styles.tinyLogo1} source={{uri:'https://res.cloudinary.com/dqcjhhtlm/image/upload/v1728132424/Ethereal_Travel_2_wc4hjg.png'}}/>
+            </View>
            
         </View>
+        
     );
 
 }
@@ -94,122 +104,55 @@ const styles= StyleSheet.create({
         flex:1,
         backgroundColor:'#ffffff',
         paddingHorizontal:30
-    },title:{
-        marginTop:30,
-        alignItems:'center'
+    },tinyLogo: {
+        marginTop:20,
+        marginLeft:5,
+        width: 400,
+        height: 200,
+      },tinyLogo1: {
+        marginTop:5,
+        marginLeft:5,
+        width: 400,
+        height: 200,
+      },
+    tieude:{
+        fontWeight:'bold',
+        fontSize:30, 
+        marginTop:10, 
+        color:'black',
+    },
+    button:{
+        backgroundColor:"#b2dbbf",
+        color:"white",
+        textAlign:"center",
+        marginTop:20,
+        height:45,
+        width:160,
+        marginLeft:230,
+        borderRadius:20
+    },
+    center:{alignItems:'center'},
+    title:{
+        fontWeight:'bold',
+        fontSize:30, 
+        color:'black'
     },form:{
         marginTop:30
-    },group:{
-        backgroundColor:'yellow'
     },ip:{
         borderBottomWidth:1,
         backgroundColor:'#fff',
         borderColor:'green',
-        paddingLeft:35
-    }});
-export default Login;
+        paddingLeft:10
+    },alertTitle: {
+        color: 'red', // Change the title color
+      },
+      alertMessage: {
+        color: 'blue', // Change the message color
+      },
+      alertButton: {
+        color: 'green', // Change the button color
+      },});
+export default Login1;
 
 
-
-
-
-// import React, { useContext } from "react";
-// import { StatusBar, StyleSheet, View,Text,Icon, TouchableOpacity } from "react-native"
-// import { TextInput } from "react-native-paper";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import StyleAll from "../../style/StyleAll";
-// import axios from "axios";
-// import { useNavigation } from "@react-navigation/native";
-// import { MyDispatchContext } from "../../config/context";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { authApi } from "../../config/APIs";
-
-
-// const Login =()=>{
-//     const [username, setUsername]=React.useState('');
-//     const [password, setPassword]=React.useState('');
-//     const  grant_type=`password`;
-//     const nav= useNavigation();
-//     const dispatch=useContext(MyDispatchContext);
-//     const onSubmit= async()=>{
-//         let formData={
-//             username:username,
-//             password:password,
-//             grant_type:'password',
-//             client_id:'22iDtvrWamdwRMH48GUgtTmNce5B6cgk0O3gY8TI',
-//             client_secret:'phrJMvTDBoKdqmTEgkOb3tzgd47fiu4bo7Ozc6eaIk2B9Prn8sgsFJT7tVlh3Ubr7PDWdOFeRfQDOV85IeNB0kILTgWNOwJpMCy1hyqr1XqcaeJpkuhmbxOEayFUOeR3',
-//         }
-
-//         axios.post('https://thuylinh.pythonanywhere.com/o/token/',formData, {
-//                 headers: {
-//                     'Content-Type': 'multipart/form-data'
-//                   }
-//             })
-//         .then((respone)=> AsyncStorage.setItem("token", respone.data.access_token))
-//         .catch((err)=>console.error(err.request))
-         
-        
-
-//         setTimeout(async()=>{
-//             let user= await authApi(respone.data.access_token).get(endpoints[['current-user']]);
-//             console.info(user.data);
-//             dispatch({
-//                 'type':'login',
-//                 'payload':user.data
-//             })
-//             nav.navigate('Home');
-//         },100);
-//     }
-//     return (
-//         // <View>
-//         //     <View>
-//         //         <StatusBar backgroundColor={'green'} barStyle="dark-content"></StatusBar>
-//         //     </View>
-//         //     <View style={styles.container}>
-//         //         <Text>Đăng nhập</Text>
-//         //     </View>
-//         // </View>
-//         <SafeAreaView style={styles.container}>
-//             <StatusBar backgroundColor={'green'} barStyle="dark-content"></StatusBar>
-//            <View style={styles.title}>
-//                 <Text style={{fontWeight:'bold',fontSize:30, color:'black'}}>Đăng nhập</Text>
-//            </View>
-//            <View style={styles.form}>
-//                 <View style={styles.group}>
-                   
-//                     <TextInput placeholder="username" style={StyleAll.input} onChangeText={(value)=>setUsername(value)}></TextInput>
-//                 </View>
-//                 <View style={styles.group}>
-                    
-//                     <TextInput placeholder="password" style={StyleAll.input} onChangeText={(value)=>setPassword(value)}></TextInput>
-//                 </View>
-//                 <TouchableOpacity style={StyleAll.button} onPress={()=>onSubmit()}>
-//                     <Text style={{color:'#ffffff',fontWeight:'bold'}}>Đăng nhập</Text>
-//                 </TouchableOpacity>
-//            </View>
-//         </SafeAreaView>
-//     )
-// }
-
-// const styles= StyleSheet.create({
-//     container:{
-//         flex:1,
-//         backgroundColor:'#ffffff',
-//         paddingHorizontal:30
-//     },title:{
-//         marginTop:30,
-//         alignItems:'center'
-//     },form:{
-//         marginTop:30
-//     },group:{
-//         backgroundColor:'yellow'
-//     },ip:{
-//         borderBottomWidth:1,
-//         backgroundColor:'#fff',
-//         borderColor:'green',
-//         paddingLeft:35
-//     }
-    
-// })
-// export default Login;
 

@@ -23,7 +23,8 @@ export const endpoints = {
     'rating_tour': (tour_id) => `/TourDetail/${tour_id}/create_rating_tour/`,
     'blog':'/BlogAll/',
     'blogdetail':(blog_id) => `/Blog/${blog_id}/`,
-    'booktour':'/BookTour/'
+    'booktour':'/BookTour/',
+    'tag':'/Tag/',
 };
 
 export const authApi = (token) => {

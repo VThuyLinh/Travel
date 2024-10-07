@@ -8,11 +8,13 @@ import moment from "moment"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { MyUserContext } from "../../config/context"
 import StyleTour from "../../style/StyleTour"
+import { isCloseToBottom } from "../Utils/util"
 
 const News =({navigation}) =>
     {
         const [news,setNews]=React.useState([]);
         const [page,setPage]=React.useState(1);
+        const [loading, setLoading]= React.useState(false);
         const user= useContext(MyUserContext);
 
         const loadNews = async () =>{

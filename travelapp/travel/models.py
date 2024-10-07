@@ -325,3 +325,11 @@ class BookHotel(DateGeneral):
     Quantity_Adult = models.IntegerField(default=1)
     Quantity_Children = models.IntegerField(default=0)
     Room = models.ForeignKey(HotelRoom, on_delete=models.CASCADE, null=False)
+
+
+class location(models.Model):
+    kdo= models.CharField(max_length=20, null=False, default="")
+    vdo = models.CharField(max_length=20, null=False, default="")
+    locationofuser= models.ForeignKey(Customer, on_delete=models.CASCADE)
+    diadiem= models.CharField(max_length=255,null=True)
+    DatePost = models.DateTimeField(auto_now_add=True)

@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity, View } from "react-native"
+import { Linking, RefreshControl, ScrollView, TouchableOpacity, View } from "react-native"
 import StyleAll from "../../style/StyleAll"
 import { ActivityIndicator, Button, Card, Chip, List, Text } from "react-native-paper"
 import React, { useContext, useState } from "react"
@@ -8,6 +8,10 @@ import moment from "moment"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { MyDispatchContext, MyUserContext } from "../../config/context"
 import StyleTour from "../../style/StyleTour"
+import axios from "axios"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { isCloseToBottom } from "../Utils/util"
+
 
 
 
@@ -17,22 +21,130 @@ import StyleTour from "../../style/StyleTour"
 const BookTourDetail =({navigation}) =>
     {
         const user= useContext(MyUserContext);
+        let date= new Date();
+        
         const [booktourdetail, setBookTourDetail]=React.useState([]);
         const [tour, setTour]=React.useState([]);
-
+        const [active, setActive]=React.useState(true);
+        const [day, setDay]= React.useState('');
+        const [month, setMonth]= React.useState('');
+        const [year, setYear]= React.useState('');
+        const [token, setToken]= React.useState('');
+        const [loading, setLoading] = React.useState(false);
+        let mngay='';
         const loadBookTourDetail = async () =>{
             try{
+                setLoading(true)
                 let res= await APIs.get(endpoints['booktourdetail']);
                 setBookTourDetail(res.data);
                 let res1= await APIs.get(endpoints['tour']);
                 setTour(res1.data.results);
-                
+                setDay(date.getDate());
+                setMonth(parseInt(date.getMonth())+1);
+                setYear(date.getFullYear());
+                mngay= Date.UTC(year,month,day);
+                let a=  Date.UTC('2024','11','12');
+                console.warn(a);
+                console.info(mngay);
+               
             }
             catch (ex){
                 console.error(ex);
             }
         }
+        const payment = async (id) => {
+            let formData={
+                State:"Paid"       
+            }
+            setLoading(loading?true:false)
+            AsyncStorage.getItem("token").then((value)=>{
+                setToken(value)})
+                console.warn(token);
+            setLoading(true)
+            try {
+                axios.patch(`https://thuylinh.pythonanywhere.com/BookTour/${id}/`,formData,{
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+            })
+                .then((respone)=>console.log(respone))
+                .catch((err)=>console.error(err.request))
+                nav.navigate("Home");
+              
+                   
+                
+            } catch (ex) {
+                console.log(ex);
+                
+               
+            } finally {
+                setLoading(false);
+            }
+        }
         
+        const reject = async (id) => {
+            let formData={
+                State:"Reject"       
+            }
+            setLoading(loading?true:false)
+            AsyncStorage.getItem("token").then((value)=>{
+                setToken(value)})
+                console.warn(token);
+            setLoading(true)
+            try {
+                axios.patch(`https://thuylinh.pythonanywhere.com/BookTour/${id}/`,formData,{
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+            })
+                .then((respone)=>console.log(respone))
+                .catch((err)=>console.error(err.request))
+               
+              
+                   
+                
+            } catch (ex) {
+                console.log(ex);
+                
+               
+            } finally {
+                setLoading(false);
+            }
+        }
+
+
+        const complete = async (id) => {
+            let formData={
+                State:"Complete"       
+            }
+            setLoading(loading?true:false)
+            AsyncStorage.getItem("token").then((value)=>{
+                setToken(value)})
+                console.warn(token);
+            setLoading(true)
+            try {
+                axios.patch(`https://thuylinh.pythonanywhere.com/BookTour/${id}/`,formData,{
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+            })
+                .then((respone)=>console.log(respone))
+                .catch((err)=>console.error(err.request))
+               
+              
+                   
+                
+            } catch (ex) {
+                console.log(ex);
+                
+               
+            } finally {
+                setLoading(false);
+            }
+        }
   
 
         React.useEffect(()=>{
@@ -40,9 +152,17 @@ const BookTourDetail =({navigation}) =>
             },[]);
             
 
+            const loadMore = () => {
+                if (loading==false) {
+                    setActive(active?true:false);
+                    
+                }
+            }
+
         return(
         <View style={StyleAll.container}>
-            <ScrollView>  
+            <RefreshControl onRefresh={() => loadBookTourDetail()} />
+            <ScrollView onScroll={loadMore}>  
                 {booktourdetail.map(c=> c.id_customer_bt!==user.id?<>
                     
                 </>:<>
@@ -74,6 +194,11 @@ const BookTourDetail =({navigation}) =>
                                
                             </View>
                         )}
+                        {tour.map(tou=>{
+                            
+                        })}
+                        
+
                         <View style={{ width: '100%', height: 1.5, backgroundColor: 'black', marginBottom:8, marginTop:8  }} />
                         <Text style={StyleTour.text2}>Thông tin đặt tour</Text>
                         <Text style={StyleTour.text1}>Mã đặt tour :{c.id_booktour}</Text>
@@ -82,19 +207,38 @@ const BookTourDetail =({navigation}) =>
                         <Text style={StyleTour.text1}>Số vé trẻ em :{c.Quantity_Children}</Text>
                         <Text style={StyleTour.text1}>Tổng tiền :{c.Price}</Text>
                         <View style={{ width: '100%', height: 1.5, backgroundColor: 'black', marginBottom:8, marginTop:8  }} />
+                        
+                        {c.State==="Wait for Paid"?<>
+                        <View style={{ flexDirection: 'row' }}>
+                        <Button style={StyleTour.btn1a} onPress={()=>{payment(`${c.id}`)}}><Text style={StyleTour.text22}>Thanh toán</Text></Button>
+                        <Button style={StyleTour.btn1b} onPress={()=>reject(`${c.id}`)}><Text style={StyleTour.text22}>Hủy</Text></Button>
+                        </View>
+                        </>:<></>}
 
-                        {c.State==='Wait for Paid'?
+                        {c.State==='Paid'?
                         <>
+                            <Text>Hãy bỏ đồ vào vali và chuẩn bị đi thôi</Text>
                            <View style={{ flexDirection: 'row' }}>
-                           <Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
-                           <Button style={StyleTour.btn1a}><Text style={StyleTour.text22}>Thanh toán</Text></Button>
+                           <Button style={StyleTour.btn2} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
+                           <Button style={StyleTour.btn1b} onPress={()=>reject(`${c.id}`)}><Text style={StyleTour.text22}>Hủy</Text></Button>
                            </View>
-                           
-                           
-                        </>
-                        :<>{c.State==='Complete'?<><Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button></>
-                        :<>{c.State==='Paid'?<><Button style={StyleTour.btn2} ><Text style={StyleTour.text21}>{c.State}</Text></Button></>
-                        :<><Button style={StyleTour.btn3} ><Text style={StyleTour.text21}>{c.State}</Text></Button></>}</>}</>}
+                        </>:<></>}
+
+                        {c.State==='Complete'?
+                        <>
+                            <Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
+                        </>:<></>}
+                        {c.State==='Reject'?
+                        <>
+                            <Button style={StyleTour.btn3} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
+                        </>:<></>}
+                        
+                        {c.State==='Complete'?
+                        <>
+                            <Button style={StyleTour.btn1} ><Text style={StyleTour.text21}>{c.State}</Text></Button>
+                        </>:<></>}
+                        
+                        
                         
                         </Card.Content>
                     </Card></>}

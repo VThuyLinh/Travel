@@ -6,6 +6,7 @@ import {MyDispatchContext, MyUserContext } from "../../config/context";
 import StyleLogin from "../../style/StyleLogin";
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { useWindowDimensions } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -13,6 +14,11 @@ const Account = () => {
     const user = useContext(MyUserContext);
     const dispatch = useContext(MyDispatchContext);
     const { width } = useWindowDimensions();
+    const nav= useNavigation();
+
+    const log=()=>{
+        nav.navigate("Home")
+    }
    
     return (
         <View style={[StyleAll.container, StyleAll.margin]}>
@@ -26,7 +32,7 @@ const Account = () => {
                 
                 <Text style={StyleLogin.text}><Icon name="mobile-retro" size={19}/>{user.sdt}</Text>
             </List.Section>
-            <Button style={StyleLogin.bnt} onPress={() => dispatch({"type": "logout"})}><Icon size={18} color="white" name="right-from-bracket" /><Text style={StyleLogin.out}>  Đăng xuất</Text></Button>
+            <Button style={StyleLogin.bnt} onPress={() => {dispatch({"type": "logout"}),log()}}><Icon size={18} color="white" name="right-from-bracket" /><Text style={StyleLogin.out}>  Đăng xuất</Text></Button>
         </View>
     );
 }

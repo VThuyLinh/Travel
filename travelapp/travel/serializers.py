@@ -271,6 +271,14 @@ class CMT_NewsSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'image', 'user']
 
 
+class LocationSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = location
+        fields = ['kdo','vdo','diadiem','id','locationofuser','DatePost']
+
+
+
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News

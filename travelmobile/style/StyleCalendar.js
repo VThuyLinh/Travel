@@ -12,6 +12,7 @@ const StyleCal =StyleSheet.create({
         fontSize:20
     },
      btn1:{
+        backgroundColor:'#b2dbbf',
         marginLeft:100,
         marginRight:100,
         marginTop:10,

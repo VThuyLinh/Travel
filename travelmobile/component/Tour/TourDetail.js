@@ -11,6 +11,7 @@ import StyleTour from "../../style/StyleTour";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { isCloseToBottom } from "../Utils/util";
 // import { useCurrencyFormatter } from 'react-native-currency-formatter';
 
 const TourDetail = ({ navigation,route }) => {
@@ -63,6 +64,7 @@ const TourDetail = ({ navigation,route }) => {
             console.error("hello",ex);
         }
     }
+    
 
     const user= useContext(MyUserContext);  
 
@@ -282,13 +284,15 @@ const TourDetail = ({ navigation,route }) => {
         }
     }
 
-   
-    
+    const loadMore = () => {
+        
+    }
    
     
     return (
-       
-           <ScrollView style={[StyleAll.container, StyleAll.margin]} >
+        <View style={StyleAll.container}>
+            <RefreshControl onRefresh={() => loadTourDetail()} />
+           <ScrollView style={[StyleAll.container, StyleAll.margin]} onScroll={loadMore} >
             {tourdetail===null?<ActivityIndicator animating={true} color={'blue'} />:
                 <Card style={StyleAll.bgrcolor}>
                     <Card.Content>
@@ -322,10 +326,7 @@ const TourDetail = ({ navigation,route }) => {
                 
                 <View>
                     {like===null?
-                        <View>
-                            <Text>Hãy là người bình luận đầu tiên</Text>
-                            
-                        </View>:<></>}
+                        <ActivityIndicator/>:<></>}
                     {like.map(l=>{
                         if(l.id==user.id)
                             if(l.Active==true)
@@ -514,6 +515,7 @@ const TourDetail = ({ navigation,route }) => {
             }
 
            </ScrollView>
+           </View>
          
     );
 };

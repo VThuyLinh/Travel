@@ -21,6 +21,7 @@ const StyleTour = StyleSheet.create({
       color:'black'
 
     },
+    
     text2:{
       fontSize:18,
       fontWeight:'bold'
@@ -31,39 +32,46 @@ const StyleTour = StyleSheet.create({
       marginBottom:30,
       marginLeft:8,
       marginRight:8,
-      height:630
+      height:650
   }
   , btn:{
     backgroundColor:"red",
-    marginTop:3,
+    marginTop:10,
     marginLeft:230,
     width:140,
     height:35,
     textAlign:"center"
   }, btn1:{
     backgroundColor:"green",
-    marginTop:3,
+    marginTop:10,
     width:160,
-    marginLeft:5,
+    marginLeft:20,
     height:35,
     textAlign:"center"
   },btn1a:{
     backgroundColor:"orange",
-    marginTop:3,
+    marginTop:10,
+    marginLeft:20,
+    width:160,
+    height:35,
+    textAlign:"center"
+  },btn1b:{
+    backgroundColor:"red",
+    marginTop:10,
     marginLeft:20,
     width:160,
     height:35,
     textAlign:"center"
   }, btn2:{
     backgroundColor:"purple",
-    marginTop:3,
-    marginLeft:210,
+    marginTop:10,
+    marginLeft:20,
     width:160,
     height:35,
     textAlign:"center",
   }, btn3:{
     backgroundColor:"black",
-    marginTop:3,
+    marginTop:10,
     marginLeft:210,
     width:160,
     height:35,
